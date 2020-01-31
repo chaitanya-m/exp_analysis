@@ -9,8 +9,9 @@ mevsynE <- mevsyn[mevsyn$X2=="E",]
 
 # note: already tested and showed that levbag without levbag equals ozabag
 
-compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn1.tex", c(17,12)) 
+#compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn1.tex", c(17,12)) 
 # Levbag efdt and levbag efdt without efdt re-evalution (re-evaluation is keeping trees short which leads to loss coupled with ADWIN)
+# now in noRevisionensembleexp.R
 
 compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn2.tex", c(18,17)) # OzaBag
 compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn3.tex", c(14,13)) # LevBag
@@ -29,8 +30,9 @@ compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn10.tex", c(7,6)) #  ARF
 mevreal <- read_csv("/home/c/exp_dir_results/output/outmetaefdtvfdtreal")
 mevrealE <- mevreal[mevreal$X2=="E",]
 
-compareTwo(mevrealE,"/home/c/papers/ensemble/mevreal1.tex", c(17,12))
+#compareTwo(mevrealE,"/home/c/papers/ensemble/mevreal1.tex", c(17,12))
 # Levbag efdt and levbag efdt without efdt re-evalution (re-evaluation is keeping trees short which leads to loss coupled with ADWIN)
+# now in noRevisionensembleexp.R
 
 compareTwo(mevrealE,"/home/c/papers/ensemble/mevreal2.tex", c(18,17)) # OzaBag
 compareTwo(mevrealE,"/home/c/papers/ensemble/mevreal3.tex", c(14,13)) # LevBag
@@ -49,8 +51,9 @@ compareTwo(mevrealE,"/home/c/papers/ensemble/mevreal10.tex", c(5,4)) #  ARF
 mevrealshuf <- read_csv("/home/c/exp_dir_results/output/outmetaefdtvfdtrealshuf")
 mevrealshufE <- mevrealshuf[mevrealshuf$X2=="E",]
 
-compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf1.tex", c(17,12))
+#compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf1.tex", c(17,12))
 # Levbag efdt and levbag efdt without efdt re-evalution (re-evaluation is keeping trees short which leads to loss coupled with ADWIN)
+# now in noRevisionensembleexp.R
 
 compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf2.tex", c(18,17)) # OzaBag
 compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf3.tex", c(14,13)) # LevBag
