@@ -92,8 +92,7 @@ compareTwo <- function(fulldf, output, compareRows){
 		A \\textbf{bold} value indicates higher accuracy, and \\textit{\\textbf{bold italics}} indicate a tie.  & \\textbf{Unique Wins}
 		\\end{tabularx}" = uniquewinsPrint)
   dft<-rbind(dft,"\\cmidrule[0.4pt](lr){2-3}"=list("",""))
-  dft<-rbind(dft, "\\begin{tabularx}{\\linewidth}{Xr} The test is a simple binomial test to determine whether the strategy in the rightmost 
-             column is likely to have lower accuracy in more than half of the experiments. & \\textbf{Test Statistics} \\end{tabularx}" 
+  dft<-rbind(dft, "\\begin{tabularx}{\\linewidth}{Xr} The test is a one-tailed binomial test to determine the probability that the strategy in the rightmost column would achieve so many wins if wins and losses were equiprobable. & \\textbf{Test Statistics} \\end{tabularx}" 
              = list(paste("\\textbf{", pvalue, "}",sep=""), paste("\\textbf{", confint,"}",sep="")))
   }
   write.table(dft,output, sep=" & ", quote=FALSE, col.names = FALSE,eol = " \\\\\n")

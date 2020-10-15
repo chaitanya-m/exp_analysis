@@ -122,10 +122,15 @@ menrrealE <- menrreal[menrreal$X2=="E",]
 menrrealshuf <- read_csv("/home/c/exp_dir_results/output/outmetaeftdnorevisionrealshuf")
 menrrealshufE <- menrrealshuf[menrrealshuf$X2=="E",]
 
-# Okay, now the noRevision results have all been taken out.
-
 # Let's also remove the repetitive datasets
 menrsynE <- menrsynE[,-c(8,11,14,15,16,22,23,24)]
+
+jointsynE <- rbind(mevsynE, menrsynE)
+
+compareTwo(jointsynE,"/home/c/papers/ensemble/menrsyn2.tex", c(17,32)) # OzaBagADWIN
+compareTwo(jointsynE,"/home/c/papers/ensemble/menrsyn3.tex", c(11,29)) # LevBag
+
+# There isn't sufficient evidence to show EFDT NoRevision has an effect
 
 
 rankTableRealStandardE <- as.data.frame(apply(menrrealE[,-c(1:2)],2, function(x){rank(x, ties.method="average")}))
@@ -149,5 +154,8 @@ rankTableRealShufE$wins = rowMeans(rankTableRealShufE[,-(1:2)])
 rankTableSyntheticShufE$wins = rowMeans(rankTableSyntheticShufE[,-(1:2)])
 
 
-
+# these are rank comparisons of EFDT-NoRev making bagging ensembles rise relative to boosting ensembles. 
+# But in the rest of the paper you compare two at a time. So the noRev results will have to be added as new rows to existing
+# tables. New comparisons will have to be done. Showing VFDT ensembles vs EFDTNoRev and showing an improvment over EFDT 
+# should suffice to be convincing.
 
