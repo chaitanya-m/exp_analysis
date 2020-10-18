@@ -22,57 +22,96 @@ mevrealshufE <- mevrealshufE[-c(12,3,4),]
 # Let's also remove the repetitive datasets
 mevsynE <- mevsynE[,-c(8,11,14,15,16,22,23,24)]
 
+col1 <- colnames(mevsynE)[3:26]
+col2 <- c("recurrent---agrawal","recurrent---randomtree","recurrent---sea", "recurrent---stagger", 
+          "hyperplane---1", "hyperplane---2","hyperplane---3","hyperplane---4",
+          "led---drift",
+          "rbf---drift-1","rbf---drift-2","rbf---drift-3","rbf---drift-4",
+          "waveform---drift",
+          "recurrent---abrupt---222","recurrent---abrupt---322","recurrent---abrupt---332","recurrent---abrupt---333","recurrent---abrupt---334",
+          "recurrent---abrupt---335","recurrent---abrupt---422","recurrent---abrupt---444","recurrent---abrupt---522","recurrent---abrupt---555")
+#col3 <- rep(" \\", 24)
+#col3
 
+dfkeysyn <- data.frame(col1,col2)
+dfkeysyn
+
+write.table(dfkeysyn, "/home/c/papers/ensemble/syntheticStreamsKey.tex", quote=FALSE, col.names = FALSE, sep = ' & ', eol = " \\\\\n",)
+
+colnames(mevsynE)[3:26] <- col2
+colnames(mevsynE)[3:26]
+
+colnames(mevrealE)[3:22] <- c("airlines", "aws---price-discretized", "chess", "covertype", "covpokelec", "fonts", 
+                              "hhar", "kdd", "localization", "miniboone", "nbaiot", "nswelec", "pamap2", 
+                              "poker", "pucrio", "sensor---home-activity", "sensor---CO-discretized", "skin", 
+                              "tnelec", "wisdm")
+ 
+colnames(mevrealshufE) <- colnames(mevrealE)
 
 # note: already tested and showed that levbag without levbag equals ozabag
 #=============================================================================
 # Now, redo tables and analysis without noRevisionEFDT
 #=============================================================================
 
-compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn2.tex", c(17,16)) # OzaBagADWIN
-compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn3.tex", c(13,12)) # OnlineSmoothBoost
-compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn4.tex", c(19,18)) # OzaBoost
-compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn5.tex", c(9,8)) # LevBagNoADWIN
+compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn0.tex", c(15,14)) # OzaBag
+compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn1.tex", c(17,16)) # OzaBagADWIN
 
-compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn6.tex", c(2,1)) # ARF Optimised Parametrization
-compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn7.tex", c(21,20)) #  OzaBoostAdwin
-compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn8.tex", c(23,22)) # Plain
-compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn9.tex", c(15,14)) # OzaBag
-compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn10.tex", c(4,3)) #  ADOB
+compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn2.tex", c(9,8)) # LevBagNoADWIN
+compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn3.tex", c(11,10)) #  LevBag
 
-compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn11.tex", c(11,10)) #  LevBag
+compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn4.tex", c(2,1)) # ARF Optimised Parametrization
+
+compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn5.tex", c(19,18)) # OzaBoost
+compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn6.tex", c(21,20)) #  OzaBoostAdwin
+
+compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn7.tex", c(4,3)) #  ADOB
+
+compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn8.tex", c(13,12)) # OnlineSmoothBoost
+
+compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn9.tex", c(23,22)) # Plain
+
 
 #=============================================================================
 
+compareTwo(mevrealE,"/home/c/papers/ensemble/mevreal0.tex", c(15,14)) # OzaBag
+compareTwo(mevrealE,"/home/c/papers/ensemble/mevreal1.tex", c(17,16)) # OzaBagADWIN
 
-compareTwo(mevrealE,"/home/c/papers/ensemble/mevreal2.tex", c(17,16)) # OzaBagADWIN
-compareTwo(mevrealE,"/home/c/papers/ensemble/mevreal3.tex", c(13,12)) # OnlineSmoothBoost
-compareTwo(mevrealE,"/home/c/papers/ensemble/mevreal4.tex", c(19,18)) # OzaBoost
-compareTwo(mevrealE,"/home/c/papers/ensemble/mevreal5.tex", c(9,8)) # LevBagNoADWIN
+compareTwo(mevrealE,"/home/c/papers/ensemble/mevreal2.tex", c(9,8)) # LevBagNoADWIN
+compareTwo(mevrealE,"/home/c/papers/ensemble/mevreal3.tex", c(11,10)) #  LevBag
 
-compareTwo(mevrealE,"/home/c/papers/ensemble/mevreal6.tex", c(2,1)) # ARF Optimised Parametrization
-compareTwo(mevrealE,"/home/c/papers/ensemble/mevreal7.tex", c(21,20)) #  OzaBoostAdwin
-compareTwo(mevrealE,"/home/c/papers/ensemble/mevreal8.tex", c(23,22)) # Plain
-compareTwo(mevrealE,"/home/c/papers/ensemble/mevreal9.tex", c(15,14)) # OzaBag
-compareTwo(mevrealE,"/home/c/papers/ensemble/mevreal10.tex", c(4,3)) #  ADOB
+compareTwo(mevrealE,"/home/c/papers/ensemble/mevreal4.tex", c(2,1)) # ARF Optimised Parametrization
 
-compareTwo(mevrealE,"/home/c/papers/ensemble/mevreal11.tex", c(11,10)) #  LevBag
+compareTwo(mevrealE,"/home/c/papers/ensemble/mevreal5.tex", c(19,18)) # OzaBoost
+compareTwo(mevrealE,"/home/c/papers/ensemble/mevreal6.tex", c(21,20)) #  OzaBoostAdwin
+
+compareTwo(mevrealE,"/home/c/papers/ensemble/mevreal7.tex", c(4,3)) #  ADOB
+
+compareTwo(mevrealE,"/home/c/papers/ensemble/mevreal8.tex", c(13,12)) # OnlineSmoothBoost
+
+compareTwo(mevrealE,"/home/c/papers/ensemble/mevreal9.tex", c(23,22)) # Plain
+
 
 
 #==============================================================================
 
-compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf2.tex", c(17,16)) # OzaBagADWIN
-compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf3.tex", c(13,12)) # OnlineSmoothBoost
-compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf4.tex", c(19,18)) # OzaBoost
-compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf5.tex", c(9,8)) # LevBagNoADWIN
 
-compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf6.tex", c(2,1)) # ARF Optimised Parametrization
-compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf7.tex", c(21,20)) #  OzaBoostAdwin
-compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf8.tex", c(23,22)) # Plain
-compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf9.tex", c(15,14)) # OzaBag
-compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf10.tex", c(4,3)) #  ADOB
+compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf0.tex", c(15,14)) # OzaBag
+compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf1.tex", c(17,16)) # OzaBagADWIN
 
-compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf11.tex", c(11,10)) #  LevBag
+compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf2.tex", c(9,8)) # LevBagNoADWIN
+compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf3.tex", c(11,10)) #  LevBag
+
+compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf4.tex", c(2,1)) # ARF Optimised Parametrization
+
+compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf5.tex", c(19,18)) # OzaBoost
+compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf6.tex", c(21,20)) #  OzaBoostAdwin
+
+compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf7.tex", c(4,3)) #  ADOB
+
+compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf8.tex", c(13,12)) # OnlineSmoothBoost
+
+compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf9.tex", c(23,22)) # Plain
+
 
 
 
