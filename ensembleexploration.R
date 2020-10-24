@@ -49,7 +49,7 @@ col2 <- c("recurrent---agrawal","recurrent---randomtree","recurrent---sea", "rec
 dfkeysyn <- data.frame(col1,col2)
 dfkeysyn
 
-#write.table(dfkeysyn, "/home/c/papers/ensemble/syntheticStreamsKey.tex", quote=FALSE, col.names = FALSE, sep = ' & ', eol = " \\\\\n",)
+write.table(dfkeysyn, "/home/c/papers/ensemble/syntheticStreamsKey.tex", quote=FALSE, col.names = FALSE, sep = ' & ', eol = " \\\\\n",)
 
 colnames(mevsynE)[3:26] <- col2
 colnames(mevsynT)[3:26] <- col2
@@ -237,6 +237,9 @@ row1 = c("ARF EFDT", "ARF VFDT", "ADOB EFDT", "ADOB VFDT", "LevBagNoAdwin EFDT",
          "OzaBoostAdwin EFDT", "OzaBoostAdwin VFDT", "Plain EFDT", "Plain VFDT")
 
 mevsynT[,1] <- row1
+
+mevsynT <- round(mevsynT[,-1], digits=0)
+
 write.table(mevsynT, "/home/c/papers/ensemble/syntheticCPUtimes.tex", quote=FALSE, col.names = TRUE, sep = ' & ', eol = " \\\\\n",)
 
 # real data times
@@ -244,6 +247,8 @@ write.table(mevsynT, "/home/c/papers/ensemble/syntheticCPUtimes.tex", quote=FALS
 mevrealT <- mevrealT[-c(5,6,7),-2]
 colnames(mevrealT)[1] <- ""
 mevrealT[,1] <- row1
+mevrealT <- round(mevrealT[,-1], digits=0)
+
 write.table(mevrealT, "/home/c/papers/ensemble/realCPUtimes.tex", quote=FALSE, col.names = TRUE, sep = ' & ', eol = " \\\\\n",)
 
 
@@ -252,6 +257,8 @@ mevrealshufT <- mevrealshufT[-c(5,6,7),-2]
 # remove buggy ARF, and BOLE (BOLE can be reintroduced if needed)
 colnames(mevrealshufT)[1] <- ""
 mevrealshufT[,1] <- row1
+mevrealshufT <- round(mevrealshufT[,-1], digits=0)
+
 write.table(mevrealshufT, "/home/c/papers/ensemble/realshufCPUtimes.tex", quote=FALSE, col.names = TRUE, sep = ' & ', eol = " \\\\\n",)
 
 
