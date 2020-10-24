@@ -228,26 +228,30 @@ rankTableSyntheticShufE$wins = rowMeans(rankTableSyntheticShufE[,-(1:2)])
 mevsynT <- mevsynT[-c(5,6,7),-2]
 # remove buggy ARF, and BOLE (BOLE can be reintroduced if needed)
 
-colnames(mevsynT)[1] <- ""
+colnames(mevsynT) <- seq(0,24)
+colnames(mevsynT)[1] <- "&"
 
 
-row1 = c("ARF EFDT", "ARF VFDT", "ADOB EFDT", "ADOB VFDT", "LevBagNoAdwin EFDT", "LevBagNoAdwin VFDT", 
+learners = c("ARF EFDT", "ARF VFDT", "ADOB EFDT", "ADOB VFDT", "LevBagNoAdwin EFDT", "LevBagNoAdwin VFDT", 
          "LeveragingBag EFDT", "LeveragingBag VFDT", "OnlineSmoothBoost EFDT", "OnlineSmoothBoost EFDT",
          "OzaBag EFDT", "OzaBag VFDT", "OzaBagAdwin EFDT", "OzaBagAdwin VFDT", "OzaBoost EFDT", "OzaBoost VFDT",
          "OzaBoostAdwin EFDT", "OzaBoostAdwin VFDT", "Plain EFDT", "Plain VFDT")
 
-mevsynT[,1] <- row1
+mevsynT[,1] <- learners
 
-mevsynT <- round(mevsynT[,-1], digits=0)
+mevsynT[,-1] <- round(mevsynT[,-1], digits=0) # round to integers
+
 
 write.table(mevsynT, "/home/c/papers/ensemble/syntheticCPUtimes.tex", quote=FALSE, col.names = TRUE, sep = ' & ', eol = " \\\\\n",)
 
 # real data times
 
 mevrealT <- mevrealT[-c(5,6,7),-2]
-colnames(mevrealT)[1] <- ""
-mevrealT[,1] <- row1
-mevrealT <- round(mevrealT[,-1], digits=0)
+colnames(mevrealT) <- seq(0,20)
+colnames(mevrealT)[1] <- "&"
+
+mevrealT[,1] <- learners
+mevrealT[,-1] <- round(mevrealT[,-1], digits=0)
 
 write.table(mevrealT, "/home/c/papers/ensemble/realCPUtimes.tex", quote=FALSE, col.names = TRUE, sep = ' & ', eol = " \\\\\n",)
 
@@ -255,9 +259,10 @@ write.table(mevrealT, "/home/c/papers/ensemble/realCPUtimes.tex", quote=FALSE, c
 # real shuf times
 mevrealshufT <- mevrealshufT[-c(5,6,7),-2]
 # remove buggy ARF, and BOLE (BOLE can be reintroduced if needed)
-colnames(mevrealshufT)[1] <- ""
-mevrealshufT[,1] <- row1
-mevrealshufT <- round(mevrealshufT[,-1], digits=0)
+colnames(mevrealshufT) <- seq(0,20)
+colnames(mevrealshufT)[1] <- "&"
+mevrealshufT[,1] <- learners
+mevrealshufT[,-1] <- round(mevrealshufT[,-1], digits=0)
 
 write.table(mevrealshufT, "/home/c/papers/ensemble/realshufCPUtimes.tex", quote=FALSE, col.names = TRUE, sep = ' & ', eol = " \\\\\n",)
 
