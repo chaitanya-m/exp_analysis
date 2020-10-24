@@ -1,26 +1,39 @@
 # first read the real and synthetic csvs
 library(readr)
-source("hatexploration.r")
+source("compareLearners.r")
 
 # mev is metaefdtvfdt. syn is synthetic (with drift), real is uci streams, realshuf is uci shuffled
 
 mevsyn <- read_csv("/home/c/exp_dir_results/output/outmetaefdtvfdtsynthetic")
 mevsynE <- mevsyn[mevsyn$X2=="E",]
 mevsynE <- mevsynE[-c(12,3,4),]
+
+mevsynT <- mevsyn[mevsyn$X2=="T",]
+mevsynT <- mevsynT[-c(12,3,4),]
 # drop line 12 with no revision efdt, as that is now a separate bunch of experiments
+# also drop old ARF with old MOA default parameters (MOA has new default parameters)
 
 mevreal <- read_csv("/home/c/exp_dir_results/output/outmetaefdtvfdtreal")
 mevrealE <- mevreal[mevreal$X2=="E",]
 mevrealE <- mevrealE[-c(12,3,4),]
 
+mevrealT <- mevreal[mevreal$X2=="T",]
+mevrealT <- mevrealT[-c(12,3,4),]
+
 mevrealshuf <- read_csv("/home/c/exp_dir_results/output/outmetaefdtvfdtrealshuf")
 mevrealshufE <- mevrealshuf[mevrealshuf$X2=="E",]
 mevrealshufE <- mevrealshufE[-c(12,3,4),]
+
+mevrealshufT <- mevrealshuf[mevrealshuf$X2=="T",]
+mevrealshufT <- mevrealshufT[-c(12,3,4),]
 
 # Okay, now the noRevision results have all been taken out.
 
 # Let's also remove the repetitive datasets
 mevsynE <- mevsynE[,-c(8,11,14,15,16,22,23,24)]
+mevsynT <- mevsynT[,-c(8,11,14,15,16,22,23,24)]
+
+
 
 col1 <- colnames(mevsynE)[3:26]
 col2 <- c("recurrent---agrawal","recurrent---randomtree","recurrent---sea", "recurrent---stagger", 
@@ -36,17 +49,23 @@ col2 <- c("recurrent---agrawal","recurrent---randomtree","recurrent---sea", "rec
 dfkeysyn <- data.frame(col1,col2)
 dfkeysyn
 
-write.table(dfkeysyn, "/home/c/papers/ensemble/syntheticStreamsKey.tex", quote=FALSE, col.names = FALSE, sep = ' & ', eol = " \\\\\n",)
+#write.table(dfkeysyn, "/home/c/papers/ensemble/syntheticStreamsKey.tex", quote=FALSE, col.names = FALSE, sep = ' & ', eol = " \\\\\n",)
 
 colnames(mevsynE)[3:26] <- col2
-colnames(mevsynE)[3:26]
+colnames(mevsynT)[3:26] <- col2
 
-colnames(mevrealE)[3:22] <- c("airlines", "aws---price-discretized", "chess", "covertype", "covpokelec", "fonts", 
-                              "hhar", "kdd", "localization", "miniboone", "nbaiot", "nswelec", "pamap2", 
-                              "poker", "pucrio", "sensor---home-activity", "sensor---CO-discretized", "skin", 
-                              "tnelec", "wisdm")
- 
-colnames(mevrealshufE) <- colnames(mevrealE)
+
+col2real <- c("airlines", "aws---price-discretized", "chess", "covertype", "covpokelec", "fonts", 
+          "hhar", "kdd", "localization", "miniboone", "nbaiot", "nswelec", "pamap2", 
+          "poker", "pucrio", "sensor---home-activity", "sensor---CO-discretized", "skin", 
+          "tnelec", "wisdm")
+
+colnames(mevrealE)[3:22] <- col2real 
+colnames(mevrealshufE)[3:22] <- col2real
+
+colnames(mevrealT)[3:22] <- col2real 
+colnames(mevrealshufT)[3:22] <- col2real
+
 
 # note: already tested and showed that levbag without levbag equals ozabag
 #=============================================================================
@@ -197,4 +216,42 @@ rankTableSyntheticShufE$wins = rowMeans(rankTableSyntheticShufE[,-(1:2)])
 # But in the rest of the paper you compare two at a time. So the noRev results will have to be added as new rows to existing
 # tables. New comparisons will have to be done. Showing VFDT ensembles vs EFDTNoRev and showing an improvment over EFDT 
 # should suffice to be convincing.
+
+
+#==============================================================================
+# cpu times
+#==============================================================================
+
+
+# synthetic times
+
+mevsynT <- mevsynT[-c(5,6,7),-2]
+# remove buggy ARF, and BOLE (BOLE can be reintroduced if needed)
+
+colnames(mevsynT)[1] <- ""
+
+
+row1 = c("ARF EFDT", "ARF VFDT", "ADOB EFDT", "ADOB VFDT", "LevBagNoAdwin EFDT", "LevBagNoAdwin VFDT", 
+         "LeveragingBag EFDT", "LeveragingBag VFDT", "OnlineSmoothBoost EFDT", "OnlineSmoothBoost EFDT",
+         "OzaBag EFDT", "OzaBag VFDT", "OzaBagAdwin EFDT", "OzaBagAdwin VFDT", "OzaBoost EFDT", "OzaBoost VFDT",
+         "OzaBoostAdwin EFDT", "OzaBoostAdwin VFDT", "Plain EFDT", "Plain VFDT")
+
+mevsynT[,1] <- row1
+write.table(mevsynT, "/home/c/papers/ensemble/syntheticCPUtimes.tex", quote=FALSE, col.names = TRUE, sep = ' & ', eol = " \\\\\n",)
+
+# real data times
+
+mevrealT <- mevrealT[-c(5,6,7),-2]
+colnames(mevrealT)[1] <- ""
+mevrealT[,1] <- row1
+write.table(mevrealT, "/home/c/papers/ensemble/realCPUtimes.tex", quote=FALSE, col.names = TRUE, sep = ' & ', eol = " \\\\\n",)
+
+
+# real shuf times
+mevrealshufT <- mevrealshufT[-c(5,6,7),-2]
+# remove buggy ARF, and BOLE (BOLE can be reintroduced if needed)
+colnames(mevrealshufT)[1] <- ""
+mevrealshufT[,1] <- row1
+write.table(mevrealshufT, "/home/c/papers/ensemble/realshufCPUtimes.tex", quote=FALSE, col.names = TRUE, sep = ' & ', eol = " \\\\\n",)
+
 
