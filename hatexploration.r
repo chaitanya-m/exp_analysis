@@ -16,10 +16,6 @@ ohssE <- ohss[ohss$Performance=="E",]
 rownames(ohssE) <- NULL # renumber the rows without skips
 
 
-
-
-
-
 # Just HAT and HAT -A
 #comparisonTable(c(19,5),ohssE,"/home/c/papers/unspecified_features/table1.tex")
 compareTwo(ohssE,"/home/c/papers/unspecified_features/table1.tex", c(19,5))
@@ -64,7 +60,7 @@ compareTwo(ohssE,"/home/c/papers/unspecified_features/table10.tex", c(7,6))
 compareTwo(ohssE,"/home/c/papers/unspecified_features/table11.tex", c(19,14))
 #table <- ohssE[c(19,14),]
 
-# Just HAT and HAT -C -D -E -A -B -H -I
+# Just HAT and HAT -C -D -E -A -B -H -I -F -G
 compareTwo(ohssE,"/home/c/papers/unspecified_features/table12.tex", c(19,6))
 
 
@@ -88,22 +84,24 @@ rownames(ovvE) <- NULL # renumber the rows without skips
 
 
 # VFDT and VFDT -C (resplitting)
-compareTwo(ovvE,"/home/c/papers/unspecified_features/table101.tex", c(5,2))
+compareTwo(ovvE,"/home/c/papers/unspecified_features/table101.tex", c(6,3))
 #table <- ovvE[c(5,2),]
 
 # VFDT and VFDT -D (no infogain averaging)
-compareTwo(ovvE,"/home/c/papers/unspecified_features/table102.tex", c(5,3))
+compareTwo(ovvE,"/home/c/papers/unspecified_features/table102.tex", c(6,4))
 #table <- ovvE[c(5,3),]
 
 # VFDT and VFDT -E (weight at leaf instead of nodetime)
-compareTwo(ovvE,"/home/c/papers/unspecified_features/table103.tex", c(5,4))
+compareTwo(ovvE,"/home/c/papers/unspecified_features/table103.tex", c(6,5))
 #table <- ovvE[c(5,4),]
 
 # VFDT and VFDT -C -D -E
-compareTwo(ovvE,"/home/c/papers/unspecified_features/table104.tex", c(5,1))
+compareTwo(ovvE,"/home/c/papers/unspecified_features/table104.tex", c(6,1))
 #table <- ovvE[c(5,1),]
 
-
+# VFDT and VFDT -C -J (clear node instead of resplitting)
+compareTwo(ovvE,"/home/c/papers/unspecified_features/table105.tex", c(6,2))
+#table <- ovvE[c(5,1),]
 
 
 # Just EFDT and an exponential shuffle
