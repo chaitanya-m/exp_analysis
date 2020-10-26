@@ -30,17 +30,15 @@ mevrealshufT <- mevrealshufT[-c(12,3,4),]
 # Okay, now the noRevision results have all been taken out.
 
 # Let's also remove the repetitive datasets
-mevsynE <- mevsynE[,-c(8,11,14,15,16,22,23,24)]
-mevsynT <- mevsynT[,-c(8,11,14,15,16,22,23,24)]
+#mevsynE <- mevsynE[,-c(8,11,14,15,16,22,23,24)]
+#mevsynT <- mevsynT[,-c(8,11,14,15,16,22,23,24)]
 
 
 
-col1 <- colnames(mevsynE)[3:26]
-col2 <- c("recurrent---agrawal","recurrent---randomtree","recurrent---sea", "recurrent---stagger", 
-          "hyperplane---1", "hyperplane---2","hyperplane---3","hyperplane---4",
-          "led---drift",
+col1 <- colnames(mevsynE)[3:28]
+col2 <- c("recurrent---agrawal","recurrent---led","recurrent---randomtree","recurrent---sea", "recurrent---stagger","recurrent---waveform", 
+          "hyperplane---1", "hyperplane---2","hyperplane---3","hyperplane---4","hyperplane---5","hyperplane---6",
           "rbf---drift-1","rbf---drift-2","rbf---drift-3","rbf---drift-4",
-          "waveform---drift",
           "recurrent---abrupt---222","recurrent---abrupt---322","recurrent---abrupt---332","recurrent---abrupt---333","recurrent---abrupt---334",
           "recurrent---abrupt---335","recurrent---abrupt---422","recurrent---abrupt---444","recurrent---abrupt---522","recurrent---abrupt---555")
 #col3 <- rep(" \\", 24)
@@ -51,8 +49,8 @@ dfkeysyn
 
 write.table(dfkeysyn, "/home/c/papers/ensemble/syntheticStreamsKey.tex", quote=FALSE, col.names = FALSE, sep = ' & ', eol = " \\\\\n",)
 
-colnames(mevsynE)[3:26] <- col2
-colnames(mevsynT)[3:26] <- col2
+colnames(mevsynE)[3:28] <- col2
+colnames(mevsynT)[3:28] <- col2
 
 
 col2real <- c("airlines", "aws---price-discretized", "chess", "covertype", "covpokelec", "fonts", 
@@ -84,10 +82,11 @@ compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn5.tex", c(19,18)) # OzaBoost
 compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn6.tex", c(21,20)) #  OzaBoostAdwin
 
 compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn7.tex", c(4,3)) #  ADOB
+compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn8.tex", c(7,6)) #  BOLE
 
-compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn8.tex", c(13,12)) # OnlineSmoothBoost
+compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn9.tex", c(13,12)) # OnlineSmoothBoost
 
-compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn9.tex", c(23,22)) # Plain
+compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn10.tex", c(23,22)) # Plain
 
 
 #=============================================================================
@@ -104,10 +103,12 @@ compareTwo(mevrealE,"/home/c/papers/ensemble/mevreal5.tex", c(19,18)) # OzaBoost
 compareTwo(mevrealE,"/home/c/papers/ensemble/mevreal6.tex", c(21,20)) #  OzaBoostAdwin
 
 compareTwo(mevrealE,"/home/c/papers/ensemble/mevreal7.tex", c(4,3)) #  ADOB
+compareTwo(mevrealE,"/home/c/papers/ensemble/mevreal8.tex", c(7,6)) #  BOLE
 
-compareTwo(mevrealE,"/home/c/papers/ensemble/mevreal8.tex", c(13,12)) # OnlineSmoothBoost
 
-compareTwo(mevrealE,"/home/c/papers/ensemble/mevreal9.tex", c(23,22)) # Plain
+compareTwo(mevrealE,"/home/c/papers/ensemble/mevreal9.tex", c(13,12)) # OnlineSmoothBoost
+
+compareTwo(mevrealE,"/home/c/papers/ensemble/mevreal10.tex", c(23,22)) # Plain
 
 
 
@@ -126,10 +127,12 @@ compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf5.tex", c(19,18)) # 
 compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf6.tex", c(21,20)) #  OzaBoostAdwin
 
 compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf7.tex", c(4,3)) #  ADOB
+compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf8.tex", c(7,6)) #  BOLE
 
-compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf8.tex", c(13,12)) # OnlineSmoothBoost
 
-compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf9.tex", c(23,22)) # Plain
+compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf9.tex", c(13,12)) # OnlineSmoothBoost
+
+compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf10.tex", c(23,22)) # Plain
 
 
 
@@ -225,14 +228,14 @@ rankTableSyntheticShufE$wins = rowMeans(rankTableSyntheticShufE[,-(1:2)])
 
 # synthetic times
 
-mevsynT <- mevsynT[-c(5,6,7),-2]
-# remove buggy ARF, and BOLE (BOLE can be reintroduced if needed)
+mevsynT <- mevsynT[-c(5),-2]
+# remove buggy ARF
 
-colnames(mevsynT) <- seq(0,24)
+colnames(mevsynT) <- seq(0,26)
 colnames(mevsynT)[1] <- "&"
 
 
-learners = c("ARF EFDT", "ARF VFDT", "ADOB EFDT", "ADOB VFDT", "LevBagNoAdwin EFDT", "LevBagNoAdwin VFDT", 
+learners = c("ARF EFDT", "ARF VFDT", "ADOB EFDT", "ADOB VFDT", "BOLE EFDT", "BOLE VFDT", "LevBagNoAdwin EFDT", "LevBagNoAdwin VFDT", 
          "LeveragingBag EFDT", "LeveragingBag VFDT", "OnlineSmoothBoost EFDT", "OnlineSmoothBoost EFDT",
          "OzaBag EFDT", "OzaBag VFDT", "OzaBagAdwin EFDT", "OzaBagAdwin VFDT", "OzaBoost EFDT", "OzaBoost VFDT",
          "OzaBoostAdwin EFDT", "OzaBoostAdwin VFDT", "Plain EFDT", "Plain VFDT")
@@ -246,7 +249,7 @@ write.table(mevsynT, "/home/c/papers/ensemble/syntheticCPUtimes.tex", quote=FALS
 
 # real data times
 
-mevrealT <- mevrealT[-c(5,6,7),-2]
+mevrealT <- mevrealT[-c(5),-2]
 colnames(mevrealT) <- seq(0,20)
 colnames(mevrealT)[1] <- "&"
 
@@ -257,7 +260,7 @@ write.table(mevrealT, "/home/c/papers/ensemble/realCPUtimes.tex", quote=FALSE, c
 
 
 # real shuf times
-mevrealshufT <- mevrealshufT[-c(5,6,7),-2]
+mevrealshufT <- mevrealshufT[-c(5),-2]
 # remove buggy ARF, and BOLE (BOLE can be reintroduced if needed)
 colnames(mevrealshufT) <- seq(0,20)
 colnames(mevrealshufT)[1] <- "&"
