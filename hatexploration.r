@@ -15,6 +15,13 @@ colnames(ohss)[names(ohss) == "X2"] <- "Performance"
 ohssE <- ohss[ohss$Performance=="E",]
 rownames(ohssE) <- NULL # renumber the rows without skips
 
+col1 <- colnames(ohssE)[3:28]
+col2 <- syntheticDataStreams
+
+dfkeysyn <- data.frame(col1,col2)
+
+colnames(ohssE)[3:28] <- col2
+
 
 # Just HAT and HAT -A
 #comparisonTable(c(19,5),ohssE,"/home/c/papers/unspecified_features/table1.tex")
@@ -23,15 +30,15 @@ compareTwo(ohssE,"/home/c/papers/unspecified_features/table1.tex", c(19,5))
 # Just HAT -A -B and HAT -A (multiple alternates also vote)
 compareTwo(ohssE,"/home/c/papers/unspecified_features/table2.tex", c(4,5))
 
-# HAT -A -B -Hand HAT -A -B (multiple alternates also vote, but single leaf alternates do not, and just multiple alternates vote)
+# HAT -A -B -H and HAT -A -B (multiple alternates also vote, but single leaf alternates do not, and just multiple alternates vote)
 compareTwo(ohssE,"/home/c/papers/unspecified_features/table3.tex", c(3,4))
 
 
-# HAT -A -B -H and HAT -A -B -H -I(multiple alternates also vote, but single leaf alternates do not; and leaf weighting on)
+# HAT -A -B -H and HAT -A -B -H -I (multiple alternates also vote, but single leaf alternates do not; and leaf weighting on)
 compareTwo(ohssE,"/home/c/papers/unspecified_features/table4.tex", c(3,2))
 #table <- ohssE[c(3,2),]
 
-# HAT and HAT -E(getweightseen instead of nodeTime)
+# HAT and HAT -E (getweightseen instead of nodeTime)
 compareTwo(ohssE,"/home/c/papers/unspecified_features/table5.tex", c(19,17))
 #table <- ohssE[c(19,17),]
 
@@ -80,6 +87,7 @@ colnames(ovv)[names(ovv) == "X2"] <- "Performance"
 ovvE <- ovv[ovv$Performance=="E",]
 rownames(ovvE) <- NULL # renumber the rows without skips
 
+colnames(ovvE)[3:28] <- col2
 
 
 

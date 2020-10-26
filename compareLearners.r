@@ -1,3 +1,10 @@
+syntheticDataStreams <- c("recurrent---agrawal","recurrent---led","recurrent---randomtree","recurrent---sea", "recurrent---stagger","recurrent---waveform", 
+  "hyperplane---1", "hyperplane---2","hyperplane---3","hyperplane---4","hyperplane---5","hyperplane---6",
+  "rbf---drift-1","rbf---drift-2","rbf---drift-3","rbf---drift-4",
+  "recurrent---abrupt---222","recurrent---abrupt---322","recurrent---abrupt---332","recurrent---abrupt---333","recurrent---abrupt---334",
+  "recurrent---abrupt---335","recurrent---abrupt---422","recurrent---abrupt---444","recurrent---abrupt---522","recurrent---abrupt---555")
+
+
 compareTwo <- function(fulldf, output, compareRows){
   
   df <- fulldf[compareRows,] #just the rows to compare
