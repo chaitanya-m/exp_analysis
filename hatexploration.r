@@ -15,12 +15,15 @@ colnames(ohss)[names(ohss) == "X2"] <- "Performance"
 ohssE <- ohss[ohss$Performance=="E",]
 rownames(ohssE) <- NULL # renumber the rows without skips
 
-col1 <- colnames(ohssE)[3:28]
+# Let's also remove the repetitive datasets - too many hyperplanes. keep the ones parameterized similarly to RBF.
+ohssE <- ohssE[,-c(11,14)]
+
+col1 <- colnames(ohssE)[3:26]
 col2 <- syntheticDataStreams
 
 dfkeysyn <- data.frame(col1,col2)
 
-colnames(ohssE)[3:28] <- col2
+colnames(ohssE)[3:26] <- col2
 
 
 # Just HAT and HAT -A
@@ -87,7 +90,10 @@ colnames(ovv)[names(ovv) == "X2"] <- "Performance"
 ovvE <- ovv[ovv$Performance=="E",]
 rownames(ovvE) <- NULL # renumber the rows without skips
 
-colnames(ovvE)[3:28] <- col2
+# Let's also remove the repetitive datasets - too many hyperplanes. keep the ones parameterized similarly to RBF.
+ovvE <- ovvE[,-c(11,14)]
+
+colnames(ovvE)[3:26] <- col2
 
 
 

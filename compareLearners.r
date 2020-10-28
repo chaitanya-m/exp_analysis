@@ -1,5 +1,5 @@
 syntheticDataStreams <- c("recurrent---agrawal","recurrent---led","recurrent---randomtree","recurrent---sea", "recurrent---stagger","recurrent---waveform", 
-  "hyperplane---1", "hyperplane---2","hyperplane---3","hyperplane---4","hyperplane---5","hyperplane---6",
+  "hyperplane---1", "hyperplane---2","hyperplane---3","hyperplane---4",
   "rbf---drift-1","rbf---drift-2","rbf---drift-3","rbf---drift-4",
   "recurrent---abrupt---222","recurrent---abrupt---322","recurrent---abrupt---332","recurrent---abrupt---333","recurrent---abrupt---334",
   "recurrent---abrupt---335","recurrent---abrupt---422","recurrent---abrupt---444","recurrent---abrupt---522","recurrent---abrupt---555")
@@ -74,7 +74,9 @@ compareTwo <- function(fulldf, output, compareRows){
     binomtest[["conf.int"]]
     list(binomtest[["p.value"]],binomtest[["conf.int"]])
     
-    pvalue<-paste("p-value:", round(binomtest[["p.value"]],5)) 
+    pvalue<-paste("p-value:", round(binomtest[["p.value"]],5))
+    if(round(binomtest[["p.value"]],5) == 0){pvalue<-paste("p-value:", "$<$", "0.00001")}
+    
     confint<-paste("Confidence Interval: ", round(binomtest[["conf.int"]][1],5), "---", round(binomtest[["conf.int"]][2],5))
     
     #formatting

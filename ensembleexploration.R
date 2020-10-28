@@ -29,13 +29,13 @@ mevrealshufT <- mevrealshufT[-c(12,3,4),]
 
 # Okay, now the noRevision results have all been taken out.
 
-# Let's also remove the repetitive datasets
-#mevsynE <- mevsynE[,-c(8,11,14,15,16,22,23,24)]
-#mevsynT <- mevsynT[,-c(8,11,14,15,16,22,23,24)]
+# Let's also remove the repetitive datasets - too many hyperplanes. keep the ones parameterized similarly to RBF.
+mevsynE <- mevsynE[,-c(11,14)]
+mevsynT <- mevsynT[,-c(11,14)]
 
 
 
-col1 <- colnames(mevsynE)[3:28]
+col1 <- colnames(mevsynE)[3:26]
 col2 <- syntheticDataStreams
 #col3 <- rep(" \\", 24)
 #col3
@@ -45,8 +45,8 @@ dfkeysyn
 
 write.table(dfkeysyn, "/home/c/papers/ensemble/syntheticStreamsKey.tex", quote=FALSE, col.names = FALSE, sep = ' & ', eol = " \\\\\n",)
 
-colnames(mevsynE)[3:28] <- col2
-colnames(mevsynT)[3:28] <- col2
+colnames(mevsynE)[3:26] <- col2
+colnames(mevsynT)[3:26] <- col2
 
 
 col2real <- c("airlines", "aws---price-discretized", "chess", "covertype", "covpokelec", "fonts", 
@@ -129,6 +129,68 @@ compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf8.tex", c(7,6)) #  B
 compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf9.tex", c(13,12)) # OnlineSmoothBoost
 
 compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf10.tex", c(23,22)) # Plain
+
+
+
+#==============================================================================
+# cpu times
+#==============================================================================
+
+
+# synthetic times
+
+mevsynT <- mevsynT[-c(5),-2]
+# remove buggy ARF
+
+colnames(mevsynT) <- seq(0,24)
+colnames(mevsynT)[1] <- "& \\textit{Learners}  $\\downarrow$ \\; \\textit{Streams} $\\rightarrow$"
+#  "& $Learners \downarrow Streams \rightarrow$"
+
+learners = c("ARF EFDT", "ARF VFDT", "ADOB EFDT", "ADOB VFDT", "BOLE EFDT", "BOLE VFDT", "LevBagNoAdwin EFDT", "LevBagNoAdwin VFDT", 
+             "LeveragingBag EFDT", "LeveragingBag VFDT", "OnlineSmoothBoost EFDT", "OnlineSmoothBoost EFDT",
+             "OzaBag EFDT", "OzaBag VFDT", "OzaBagAdwin EFDT", "OzaBagAdwin VFDT", "OzaBoost EFDT", "OzaBoost VFDT",
+             "OzaBoostAdwin EFDT", "OzaBoostAdwin VFDT", "Plain EFDT", "Plain VFDT")
+
+mevsynT[,1] <- learners
+
+mevsynT[,-1] <- round(mevsynT[,-1], digits=0) # round to integers
+
+
+write.table(mevsynT, "/home/c/papers/ensemble/syntheticCPUtimes.tex", quote=FALSE, col.names = TRUE, sep = ' & ', eol = " \\\\\\hline\n",)
+
+# real data times
+
+mevrealT <- mevrealT[-c(5),-2]
+colnames(mevrealT) <- seq(0,20)
+colnames(mevrealT)[1] <- colnames(mevsynT)[1]
+
+mevrealT[,1] <- learners
+mevrealT[,-1] <- round(mevrealT[,-1], digits=0)
+
+write.table(mevrealT, "/home/c/papers/ensemble/realCPUtimes.tex", quote=FALSE, col.names = TRUE, sep = ' & ', eol = " \\\\\\hline\n",)
+
+
+# real shuf times
+mevrealshufT <- mevrealshufT[-c(5),-2]
+# remove buggy ARF, and BOLE (BOLE can be reintroduced if needed)
+colnames(mevrealshufT) <- seq(0,20)
+colnames(mevrealshufT)[1] <- colnames(mevsynT)[1]
+mevrealshufT[,1] <- learners
+mevrealshufT[,-1] <- round(mevrealshufT[,-1], digits=0)
+
+write.table(mevrealshufT, "/home/c/papers/ensemble/realshufCPUtimes.tex", quote=FALSE, col.names = TRUE, sep = ' & ', eol = " \\\\\\hline\n",)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -215,54 +277,5 @@ rankTableSyntheticShufE$wins = rowMeans(rankTableSyntheticShufE[,-(1:2)])
 # But in the rest of the paper you compare two at a time. So the noRev results will have to be added as new rows to existing
 # tables. New comparisons will have to be done. Showing VFDT ensembles vs EFDTNoRev and showing an improvment over EFDT 
 # should suffice to be convincing.
-
-
-#==============================================================================
-# cpu times
-#==============================================================================
-
-
-# synthetic times
-
-mevsynT <- mevsynT[-c(5),-2]
-# remove buggy ARF
-
-colnames(mevsynT) <- seq(0,26)
-colnames(mevsynT)[1] <- "&"
-
-
-learners = c("ARF EFDT", "ARF VFDT", "ADOB EFDT", "ADOB VFDT", "BOLE EFDT", "BOLE VFDT", "LevBagNoAdwin EFDT", "LevBagNoAdwin VFDT", 
-         "LeveragingBag EFDT", "LeveragingBag VFDT", "OnlineSmoothBoost EFDT", "OnlineSmoothBoost EFDT",
-         "OzaBag EFDT", "OzaBag VFDT", "OzaBagAdwin EFDT", "OzaBagAdwin VFDT", "OzaBoost EFDT", "OzaBoost VFDT",
-         "OzaBoostAdwin EFDT", "OzaBoostAdwin VFDT", "Plain EFDT", "Plain VFDT")
-
-mevsynT[,1] <- learners
-
-mevsynT[,-1] <- round(mevsynT[,-1], digits=0) # round to integers
-
-
-write.table(mevsynT, "/home/c/papers/ensemble/syntheticCPUtimes.tex", quote=FALSE, col.names = TRUE, sep = ' & ', eol = " \\\\\n",)
-
-# real data times
-
-mevrealT <- mevrealT[-c(5),-2]
-colnames(mevrealT) <- seq(0,20)
-colnames(mevrealT)[1] <- "&"
-
-mevrealT[,1] <- learners
-mevrealT[,-1] <- round(mevrealT[,-1], digits=0)
-
-write.table(mevrealT, "/home/c/papers/ensemble/realCPUtimes.tex", quote=FALSE, col.names = TRUE, sep = ' & ', eol = " \\\\\n",)
-
-
-# real shuf times
-mevrealshufT <- mevrealshufT[-c(5),-2]
-# remove buggy ARF, and BOLE (BOLE can be reintroduced if needed)
-colnames(mevrealshufT) <- seq(0,20)
-colnames(mevrealshufT)[1] <- "&"
-mevrealshufT[,1] <- learners
-mevrealshufT[,-1] <- round(mevrealshufT[,-1], digits=0)
-
-write.table(mevrealshufT, "/home/c/papers/ensemble/realshufCPUtimes.tex", quote=FALSE, col.names = TRUE, sep = ' & ', eol = " \\\\\n",)
 
 
