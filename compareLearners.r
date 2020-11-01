@@ -92,3 +92,6 @@ compareTwo <- function(fulldf, output, compareRows){
   #file.show(output)  
   
 }
+
+
+

@@ -1,81 +1,147 @@
 # first read the real and synthetic csvs
+
+#closeAllConnections()
 library(readr)
 source("compareLearners.r")
 
-ohss<- read_csv("/home/c/exp_dir_results/output/outhatsynshuf")
+ots<- read_csv("/home/c/exp_dir_results/outtreesyn0")
 
-nrow(ohss)
+nrow(ots)
 
-length(colnames(ohss))
-length(names(ohss))
+length(colnames(ots))
+length(names(ots))
 
-colnames(ohss)[names(ohss) == "X1"] <- "Learners"
-colnames(ohss)[names(ohss) == "X2"] <- "Performance"
+colnames(ots)[names(ots) == "X1"] <- "Learners"
+colnames(ots)[names(ots) == "X2"] <- "Performance"
 
-ohssE <- ohss[ohss$Performance=="E",]
-rownames(ohssE) <- NULL # renumber the rows without skips
+otsE <- ots[ots$Performance=="E",]
+rownames(otsE) <- NULL # renumber the rows without skips
 
 # Let's also remove the repetitive datasets - too many hyperplanes. keep the ones parameterized similarly to RBF.
-ohssE <- ohssE[,-c(11,14)]
+#otsE <- otsE[,-c(11,14)]
 
-col1 <- colnames(ohssE)[3:26]
+col1 <- colnames(otsE)[3:26]
 col2 <- syntheticDataStreams
 
 dfkeysyn <- data.frame(col1,col2)
 
-colnames(ohssE)[3:26] <- col2
+colnames(otsE)[3:26] <- col2
 
-write.table(dfkeysyn, "/home/c/papers/unspecified_features/syntheticStreamsKey.tex", quote=FALSE, col.names = FALSE, sep = ' & ', eol = " \\\\\n",)
+#print(otsE[,1])
+
+
+compareAll <- function(fulldf){
+    print(fulldf[,1])
+  
+    for (row1 in 1:nrow(fulldf)) {
+        for (row2 in 1:nrow(fulldf)) {
+            if(row1 != row2){
+                #print("======================================================================")
+              
+                # just the rows to compare
+              
+                compare_df <- fulldf[c(row1,row2),]
+                print(compare_df[,1])
+                #print(compare_df)
+                compare_df <- compare_df[,-1]         # without column names
+                
+                #print(compare_df[c(1,2),c(1,2)])
+                #print(row.names(compare_df))
+                #print(paste("Comparing ", compare_df[1,0], " and ", compare_df[2,0]))
+                
+                # column-wise minima
+                all_min <- apply(compare_df,2,FUN=min)
+
+                # find all occurrences of minimum in each column
+                minima<-list()
+                for (col in 1:ncol(compare_df)) { 
+                  minima[[col]]<-which(all_min[col]==compare_df[,col])
+                }
+                
+                #print(all_min)
+                #print(minima)
+                # now add up unique wins per row
+                uniquewins<-list()
+                uniqueminima<-minima[lapply(minima, length) == 1] # Only one min implies unique minimum
+                #print(uniqueminima)
+                for(row in 1:nrow(compare_df)){
+                  uniquewins[[row]]<-sum(uniqueminima==row)       # Sum up the number of times this row wins
+                }
+                
+                #print(uniquewins)
+
+                uniqueWinsRow1 <- uniquewins[[1]]
+                uniqueWinsRow2 <- uniquewins[[2]]
+                
+                #print(uniqueWinsRow1)
+                #print(uniqueWinsRow2)
+                if(uniqueWinsRow1 > 0 || uniqueWinsRow2 > 0){
+                  binomtest<-binom.test(uniqueWinsRow2, uniqueWinsRow2 + uniqueWinsRow1, (1/2), alternative = "greater")
+                  print(binomtest$p.value)
+                }
+                # print(c(fulldf[row1,1],fulldf[row2,1]))
+                
+                print("======================================================================")
+                
+            }
+        }
+    }
+}
+
+compareAll(otsE[,-2]) # without error symbol
+
+
+#write.table(dfkeysyn, "/home/c/papers/tree/syntheticStreamsKey.tex", quote=FALSE, col.names = FALSE, sep = ' & ', eol = " \\\\\n",)
 
 
 
 
 # Just HAT and HAT -A
-#comparisonTable(c(19,5),ohssE,"/home/c/papers/unspecified_features/table1.tex")
-compareTwo(ohssE,"/home/c/papers/unspecified_features/table1.tex", c(19,5))
+#comparisonTable(c(19,5),otsE,"/home/c/papers/tree/table1.tex")
+compareTwo(otsE,"/home/c/papers/tree/table1.tex", c(19,5))
 
 # Just HAT -A -B and HAT -A (multiple alternates also vote)
-compareTwo(ohssE,"/home/c/papers/unspecified_features/table2.tex", c(4,5))
+compareTwo(otsE,"/home/c/papers/tree/table2.tex", c(4,5))
 
 # HAT -A -B -H and HAT -A -B (multiple alternates also vote, but single leaf alternates do not, and just multiple alternates vote)
-compareTwo(ohssE,"/home/c/papers/unspecified_features/table3.tex", c(3,4))
+compareTwo(otsE,"/home/c/papers/tree/table3.tex", c(3,4))
 
 
 # HAT -A -B -H and HAT -A -B -H -I (multiple alternates also vote, but single leaf alternates do not; and leaf weighting on)
-compareTwo(ohssE,"/home/c/papers/unspecified_features/table4.tex", c(3,2))
-#table <- ohssE[c(3,2),]
+compareTwo(otsE,"/home/c/papers/tree/table4.tex", c(3,2))
+#table <- otsE[c(3,2),]
 
 # HAT and HAT -E (getweightseen instead of nodeTime)
-compareTwo(ohssE,"/home/c/papers/unspecified_features/table5.tex", c(19,17))
-#table <- ohssE[c(19,17),]
+compareTwo(otsE,"/home/c/papers/tree/table5.tex", c(19,17))
+#table <- otsE[c(19,17),]
 
 # HAT and HAT -C (resplitting on nominals)
-compareTwo(ohssE,"/home/c/papers/unspecified_features/table6.tex", c(19,15))
-#table <- ohssE[c(19,15),]
+compareTwo(otsE,"/home/c/papers/tree/table6.tex", c(19,15))
+#table <- otsE[c(19,15),]
 
 # HAT and HAT -D (no averaging infogain)
-compareTwo(ohssE,"/home/c/papers/unspecified_features/table7.tex", c(19,16))
-#table <- ohssE[c(19,16),]
+compareTwo(otsE,"/home/c/papers/tree/table7.tex", c(19,16))
+#table <- otsE[c(19,16),]
 
 # HAT -CDE and HAT -CDE -F(vfdt behaviors, and top level replacement behavior)
-compareTwo(ohssE,"/home/c/papers/unspecified_features/table8.tex", c(14,12))
-#table <- ohssE[c(14,12),]
+compareTwo(otsE,"/home/c/papers/tree/table8.tex", c(14,12))
+#table <- otsE[c(14,12),]
 
 
 # HAT -CDE and HAT -CDE -G(vfdt behaviors, and alternate replacement behavior)
-compareTwo(ohssE,"/home/c/papers/unspecified_features/table9.tex", c(14,13))
-#table <- ohssE[c(14,13),]
+compareTwo(otsE,"/home/c/papers/tree/table9.tex", c(14,13))
+#table <- otsE[c(14,13),]
 
 #	-l (trees.HAT -C -D -E -A -B -H -I) and 7	-l (trees.HAT -C -D -E -A -B -H -I -F -G) (without and with alternate replacement behavior)
-compareTwo(ohssE,"/home/c/papers/unspecified_features/table10.tex", c(7,6))
-#table <- ohssE[c(7,6),]
+compareTwo(otsE,"/home/c/papers/tree/table10.tex", c(7,6))
+#table <- otsE[c(7,6),]
 
 #	HAT and HAT -C -D -E (without and with VFDT undocumented behaviors)
-compareTwo(ohssE,"/home/c/papers/unspecified_features/table11.tex", c(19,14))
-#table <- ohssE[c(19,14),]
+compareTwo(otsE,"/home/c/papers/tree/table11.tex", c(19,14))
+#table <- otsE[c(19,14),]
 
 # Just HAT and HAT -C -D -E -A -B -H -I -F -G
-compareTwo(ohssE,"/home/c/papers/unspecified_features/table12.tex", c(19,6))
+compareTwo(otsE,"/home/c/papers/tree/table12.tex", c(19,6))
 
 
 
@@ -102,23 +168,23 @@ colnames(ovvE)[3:26] <- col2
 
 
 # VFDT and VFDT -C (resplitting)
-compareTwo(ovvE,"/home/c/papers/unspecified_features/table101.tex", c(6,3))
+compareTwo(ovvE,"/home/c/papers/tree/table101.tex", c(6,3))
 #table <- ovvE[c(5,2),]
 
 # VFDT and VFDT -D (no infogain averaging)
-compareTwo(ovvE,"/home/c/papers/unspecified_features/table102.tex", c(6,4))
+compareTwo(ovvE,"/home/c/papers/tree/table102.tex", c(6,4))
 #table <- ovvE[c(5,3),]
 
 # VFDT and VFDT -E (weight at leaf instead of nodetime)
-compareTwo(ovvE,"/home/c/papers/unspecified_features/table103.tex", c(6,5))
+compareTwo(ovvE,"/home/c/papers/tree/table103.tex", c(6,5))
 #table <- ovvE[c(5,4),]
 
 # VFDT and VFDT -C -D -E
-compareTwo(ovvE,"/home/c/papers/unspecified_features/table104.tex", c(6,1))
+compareTwo(ovvE,"/home/c/papers/tree/table104.tex", c(6,1))
 #table <- ovvE[c(5,1),]
 
 # VFDT and VFDT -C -J (clear node instead of resplitting)
-compareTwo(ovvE,"/home/c/papers/unspecified_features/table105.tex", c(6,2))
+compareTwo(ovvE,"/home/c/papers/tree/table105.tex", c(6,2))
 #table <- ovvE[c(5,1),]
 
 
@@ -257,6 +323,6 @@ compareTwo(ovvE,"/home/c/papers/unspecified_features/table105.tex", c(6,2))
 # file.show(output)  
 # 
 # #View(x[,2])
-# #write.table(x,"/home/c/papers/unspecified_features/table1.csv", sep=",", quote=FALSE, col.names = FALSE)
+# #write.table(x,"/home/c/papers/tree/table1.csv", sep=",", quote=FALSE, col.names = FALSE)
 # 
 
