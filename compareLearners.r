@@ -95,3 +95,69 @@ compareTwo <- function(fulldf, output, compareRows){
 
 
 
+compareAll <- function(fulldf){
+  #print(fulldf[,1])
+  fullcomparison_df <- data.frame(Learner1=character(), Learner2=character(), Learner2wins=integer(), Totalwins=integer(), pvalue=double(), stringsAsFactors=FALSE)
+  print(fullcomparison_df)
+  for (row1 in 1:nrow(fulldf)) {
+    for (row2 in 1:nrow(fulldf)) {
+      if(row1 != row2){
+        #print("======================================================================")
+        
+        # just the rows to compare
+        
+        compare_df <- fulldf[c(row1,row2),]
+        #print(compare_df[,1])
+        #print(compare_df)
+        compare_df <- compare_df[,-1]         # without column names
+        
+        #print(compare_df[c(1,2),c(1,2)])
+        #print(row.names(compare_df))
+        #print(paste("Comparing ", compare_df[1,0], " and ", compare_df[2,0]))
+        
+        # column-wise minima
+        all_min <- apply(compare_df,2,FUN=min)
+        
+        # find all occurrences of minimum in each column
+        minima<-list()
+        for (col in 1:ncol(compare_df)) { 
+          minima[[col]]<-which(all_min[col]==compare_df[,col])
+        }
+        
+        #print(all_min)
+        #print(minima)
+        # now add up unique wins per row
+        uniquewins<-list()
+        uniqueminima<-minima[lapply(minima, length) == 1] # Only one min implies unique minimum
+        #print(uniqueminima)
+        for(row in 1:nrow(compare_df)){
+          uniquewins[[row]]<-sum(uniqueminima==row)       # Sum up the number of times this row wins
+        }
+        
+        #print(uniquewins)
+        
+        uniqueWinsRow1 <- uniquewins[[1]]
+        uniqueWinsRow2 <- uniquewins[[2]]
+        
+        #print(uniqueWinsRow1)
+        #print(uniqueWinsRow2)
+        if(uniqueWinsRow1 > 0 || uniqueWinsRow2 > 0){
+          binomtest<-binom.test(uniqueWinsRow2, uniqueWinsRow2 + uniqueWinsRow1, (1/2), alternative = "greater")
+          #print(binomtest$p.value)
+        }
+        # print(c(fulldf[row1,1],fulldf[row2,1]))
+        fullcomparison_df <- rbind(fullcomparison_df, 
+                                   data.frame(Learner1=fulldf[[row1,1]], Learner2=fulldf[[row2,1]], 
+                                              Learner2wins=uniqueWinsRow2, 
+                                              Totalwins=uniqueWinsRow2 + uniqueWinsRow1, 
+                                              pvalue=binomtest$p.value))
+        #print("======================================================================")
+        
+      }
+    }
+  }
+  
+  return(fullcomparison_df)
+  
+  
+}
