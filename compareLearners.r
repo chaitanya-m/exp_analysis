@@ -4,6 +4,10 @@ syntheticDataStreams <- c("recurrent---agrawal","recurrent---led","recurrent---r
   "recurrent---abrupt---222","recurrent---abrupt---322","recurrent---abrupt---332","recurrent---abrupt---333","recurrent---abrupt---334",
   "recurrent---abrupt---335","recurrent---abrupt---422","recurrent---abrupt---444","recurrent---abrupt---522","recurrent---abrupt---555")
 
+realDataStreams <- c("airlines", "aws---price-discretized", "chess", "covertype", "covpokelec", "fonts", 
+              "hhar", "kdd", "localization", "miniboone", "nbaiot", "nswelec", "pamap2", 
+              "poker", "pucrio", "sensor---home-activity", "sensor---CO-discretized", "skin", 
+              "tnelec", "wisdm")
 
 compareTwo <- function(fulldf, output, compareRows){
   

@@ -4,38 +4,94 @@
 library(readr)
 source("compareLearners.r")
 
-# This is MOA version of HAT with all unspecified features
-
-dfhathateagersyn<- read_csv("/home/c/exp_dir_results/output/outhathateagersynthetic")
 
 
+tidydfsynthetic <- function(df){
+  
+  nrow(df)
+  length(colnames(df))
+  length(names(df))
+  
+  colnames(df)[names(df) == "X1"] <- "Learners"
+  colnames(df)[names(df) == "X2"] <- "Performance"
+  
+  dfE <- df[df$Performance=="E",]
+  rownames(dfE) <- NULL # renumber the rows without skips
+  
+  # Let's also remove the repetitive datasets - too many hyperplanes. keep the ones parameterized similarly to RBF.
+  #dfE <- dfE[,-c(11,14)]
+  
+  col1 <- colnames(dfE)[3:26]
+  col2 <- syntheticDataStreams
+  
+  dfkeysyn <- data.frame(col1,col2)
+  
+  colnames(dfE)[3:26] <- col2
+  
+  return(dfE[,-2]) # without error symbol
+}
 
-nrow(dfhathateagersyn)
-
-length(colnames(dfhathateagersyn))
-length(names(dfhathateagersyn))
-
-colnames(dfhathateagersyn)[names(dfhathateagersyn) == "X1"] <- "Learners"
-colnames(dfhathateagersyn)[names(dfhathateagersyn) == "X2"] <- "Performance"
-
-dfhathateagersynE <- dfhathateagersyn[dfhathateagersyn$Performance=="E",]
-rownames(dfhathateagersynE) <- NULL # renumber the rows without skips
-
-# Let's also remove the repetitive datasets - too many hyperplanes. keep the ones parameterized similarly to RBF.
-#dfhathateagersynE <- dfhathateagersynE[,-c(11,14)]
-
-col1 <- colnames(dfhathateagersynE)[3:26]
-col2 <- syntheticDataStreams
-
-dfkeysyn <- data.frame(col1,col2)
-
-colnames(dfhathateagersynE)[3:26] <- col2
+tidydfreal <- function(df){
+  
+  nrow(df)
+  length(colnames(df))
+  length(names(df))
+  
+  colnames(df)[names(df) == "X1"] <- "Learners"
+  colnames(df)[names(df) == "X2"] <- "Performance"
+  
+  dfE <- df[df$Performance=="E",]
+  rownames(dfE) <- NULL # renumber the rows without skips
+  
+  # Let's also remove the repetitive datasets - too many hyperplanes. keep the ones parameterized similarly to RBF.
+  #dfE <- dfE[,-c(11,14)]
+  
+  col1 <- colnames(dfE)[3:22]
+  col2 <- realDataStreams
+  
+  dfkeysyn <- data.frame(col1,col2)
+  
+  colnames(dfE)[3:22] <- col2
+  
+  return(dfE[,-2]) # without error symbol
+  
+}
 
 #print(dfhathateagersynE[,1])
+#================================================================================
+
+
+# This is MOA version of HAT with all unspecified features
+
+dfefdthatsyn<- read_csv("/home/c/exp_dir_results/output/outefdthatsynthetic")
+dfefdthatreal<- read_csv("/home/c/exp_dir_results/output/outefdthatreal")
+dfefdthatrealshuf<- read_csv("/home/c/exp_dir_results/output/outefdthatrealshuf")
+
+dfhathateagersyn<- read_csv("/home/c/exp_dir_results/output/outhathateagersynthetic")
+dfhathateagerreal<- read_csv("/home/c/exp_dir_results/output/outhathateagerreal")
+dfhathateagerrealshuf<- read_csv("/home/c/exp_dir_results/output/outhathateagerrealshuf")
+
+compare_efdthatsyn <- compareAll( rbind( tidydfsynthetic(dfefdthatsyn), tidydfsynthetic(dfhathateagersyn)[2,] ) ) 
+compare_efdthatreal <- compareAll( rbind( tidydfreal(dfefdthatreal), tidydfreal(dfhathateagerreal)[2,]    ) ) 
+compare_efdthatrealshuf <- compareAll( rbind( tidydfreal(dfefdthatrealshuf), tidydfreal(dfhathateagerrealshuf)[2,]) )
+
+compare_hathateagersyn <- compareAll(tidydfsynthetic(dfhathateagersyn)) 
+compare_hathateagerreal <- compareAll(tidydfreal(dfhathateagerreal)) 
+compare_hathateagerrealshuf <- compareAll(tidydfreal(dfhathateagerrealshuf)) 
+
+compareTwo(tidydfsynthetic(dfefdthatsyn),"/home/c/papers/1progressReport/content/tables/efdthatsyn.tex", c(1,2))
+compareTwo(tidydfreal(dfefdthatreal),"/home/c/papers/1progressReport/content/tables/efdthatreal.tex", c(1,2))
+compareTwo(tidydfreal(dfefdthatrealshuf),"/home/c/papers/1progressReport/content/tables/efdthatrealshuf.tex", c(1,2))
+
+compareTwo(tidydfsynthetic(dfhathateagersyn),"/home/c/papers/1progressReport/content/tables/hathateagersyn.tex", c(1,2))
+compareTwo(tidydfreal(dfhathateagerreal),"/home/c/papers/1progressReport/content/tables/hathateagerreal.tex", c(1,2))
+compareTwo(tidydfreal(dfhathateagerrealshuf),"/home/c/papers/1progressReport/content/tables/hathateagerrealshuf.tex", c(1,2))
 
 
 
-allComparisons <- compareAll(dfhathateagersynE[,-2]) # without error symbol
+
+
+
 
 
 #=================================================================================
