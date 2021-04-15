@@ -4,34 +4,66 @@ source("compareLearners.r")
 
 # mev is metaefdtvfdt. syn is synthetic (with drift), real is uci streams, realshuf is uci shuffled
 
-mevsyn <- read_csv("/home/c/exp_dir_results/output/outmetaefdtvfdtsynthetic")
-mevsynE <- mevsyn[mevsyn$X2=="E",]
-mevsynE <- mevsynE[-c(12,3,4),]
+mevsyn <- read_csv("/home/c/results2/output/outmetaefdtvfdtsynshuf")
+mevreal <- read_csv("/home/c/results2/output/outmetaefdtvfdtreal")
+mevrealshuf <- read_csv("/home/c/results2/output/outmetaefdtvfdtrealshuf")
 
-mevsynT <- mevsyn[mevsyn$X2=="T",]
-mevsynT <- mevsynT[-c(12,3,4),]
-# drop line 12 with no revision efdt, as that is now a separate bunch of experiments
-# also drop old ARF with old MOA default parameters (MOA has new default parameters)
 
-mevreal <- read_csv("/home/c/exp_dir_results/output/outmetaefdtvfdtreal")
-mevrealE <- mevreal[mevreal$X2=="E",]
-mevrealE <- mevrealE[-c(12,3,4),]
+clean_df<-function(df){
+  
+  
+  # drop line 12 with no revision efdt, as that is now a separate bunch of experiments
+  # also drop old ARF with old MOA default parameters (MOA has new default parameters)
+  df<-df[-c(12,3,4),]
+  
+  # Let's also remove the repetitive datasets - too many hyperplanes. keep the ones parameterized similarly to RBF.
+  #df<-df[,-c(11,14)] # already removed now from source
+  
+  return(df)
+}
 
-mevrealT <- mevreal[mevreal$X2=="T",]
-mevrealT <- mevrealT[-c(12,3,4),]
+mevsynE <- clean_df(mevsyn[mevsyn$X2=="E",])
+mevsynT <- clean_df(mevsyn[mevsyn$X2=="T",])
+mevsynV <- clean_df(mevsyn[mevsyn$X2=="V",])
+mevsynL <- clean_df(mevsyn[mevsyn$X2=="L",])
 
-mevrealshuf <- read_csv("/home/c/exp_dir_results/output/outmetaefdtvfdtrealshuf")
-mevrealshufE <- mevrealshuf[mevrealshuf$X2=="E",]
-mevrealshufE <- mevrealshufE[-c(12,3,4),]
+mevrealE <- clean_df(mevreal[mevreal$X2=="E",])
+mevrealT <- clean_df(mevreal[mevreal$X2=="T",])
 
-mevrealshufT <- mevrealshuf[mevrealshuf$X2=="T",]
-mevrealshufT <- mevrealshufT[-c(12,3,4),]
+mevrealshufE <- clean_df(mevrealshuf[mevrealshuf$X2=="E",])
+mevrealshufT <- clean_df(mevrealshuf[mevrealshuf$X2=="T",])
+mevrealshufV <- clean_df(mevrealshuf[mevrealshuf$X2=="V",])
+mevrealshufL <- clean_df(mevrealshuf[mevrealshuf$X2=="L",])
+
+
+
+# mevsynE <- mevsyn[mevsyn$X2=="E",]
+# mevsynE <- mevsynE[-c(12,3,4),]
+# 
+# mevsynT <- mevsyn[mevsyn$X2=="T",]
+# mevsynT <- mevsynT[-c(12,3,4),]
+
+
+
+
+# mevrealE <- mevreal[mevreal$X2=="E",]
+# mevrealE <- mevrealE[-c(12,3,4),]
+# 
+# mevrealT <- mevreal[mevreal$X2=="T",]
+# mevrealT <- mevrealT[-c(12,3,4),]
+
+# mevrealshufE <- mevrealshuf[mevrealshuf$X2=="E",]
+# mevrealshufE <- mevrealshufE[-c(12,3,4),]
+# 
+# mevrealshufT <- mevrealshuf[mevrealshuf$X2=="T",]
+# mevrealshufT <- mevrealshufT[-c(12,3,4),]
 
 # Okay, now the noRevision results have all been taken out.
 
+
 # Let's also remove the repetitive datasets - too many hyperplanes. keep the ones parameterized similarly to RBF.
-mevsynE <- mevsynE[,-c(11,14)]
-mevsynT <- mevsynT[,-c(11,14)]
+#mevsynE <- mevsynE[,-c(11,14)]
+#mevsynT <- mevsynT[,-c(11,14)]
 
 
 
@@ -47,6 +79,8 @@ write.table(dfkeysyn, "/home/c/papers/ensemble/syntheticStreamsKey.tex", quote=F
 
 colnames(mevsynE)[3:26] <- col2
 colnames(mevsynT)[3:26] <- col2
+colnames(mevsynV)[3:26] <- col2
+colnames(mevsynL)[3:26] <- col2
 
 
 col2real <- c("airlines", "aws---price-discretized", "chess", "covertype", "covpokelec", "fonts", 
@@ -60,29 +94,62 @@ colnames(mevrealshufE)[3:22] <- col2real
 colnames(mevrealT)[3:22] <- col2real 
 colnames(mevrealshufT)[3:22] <- col2real
 
+colnames(mevrealshufV)[3:22] <- col2real
+
+colnames(mevrealshufL)[3:22] <- col2real
+
 
 # note: already tested and showed that levbag without levbag equals ozabag
 #=============================================================================
 # Now, redo tables and analysis without noRevisionEFDT
 #=============================================================================
 
-compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn0.tex", c(15,14)) # OzaBag
-compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn1.tex", c(17,16)) # OzaBagADWIN
+dfs <- list(mevsynE, mevsynV, mevsynL)
 
-compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn2.tex", c(9,8)) # LevBagNoADWIN
-compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn3.tex", c(11,10)) #  LevBag
 
-compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn4.tex", c(2,1)) # ARF Optimised Parametrization
+compareTwo(dfs,"/home/c/papers/ensemble/mevsyn0.tex", c(15,14)) # OzaBag
+compareTwo(dfs,"/home/c/papers/ensemble/mevsyn1.tex", c(17,16)) # OzaBagADWIN
 
-compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn5.tex", c(19,18)) # OzaBoost
-compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn6.tex", c(21,20)) #  OzaBoostAdwin
+compareTwo(dfs,"/home/c/papers/ensemble/mevsyn2.tex", c(9,8)) # LevBagNoADWIN
+compareTwo(dfs,"/home/c/papers/ensemble/mevsyn3.tex", c(11,10)) #  LevBag
 
-compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn7.tex", c(4,3)) #  ADOB
-compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn8.tex", c(7,6)) #  BOLE
+compareTwo(dfs,"/home/c/papers/ensemble/mevsyn4.tex", c(2,1)) # ARF Optimised Parametrization
 
-compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn9.tex", c(13,12)) # OnlineSmoothBoost
+compareTwo(dfs,"/home/c/papers/ensemble/mevsyn5.tex", c(19,18)) # OzaBoost
+compareTwo(dfs,"/home/c/papers/ensemble/mevsyn6.tex", c(21,20)) #  OzaBoostAdwin
 
-compareTwo(mevsynE,"/home/c/papers/ensemble/mevsyn10.tex", c(23,22)) # Plain
+compareTwo(dfs,"/home/c/papers/ensemble/mevsyn7.tex", c(4,3)) #  ADOB
+compareTwo(dfs,"/home/c/papers/ensemble/mevsyn8.tex", c(7,6)) #  BOLE
+
+compareTwo(dfs,"/home/c/papers/ensemble/mevsyn9.tex", c(13,12)) # OnlineSmoothBoost
+
+compareTwo(dfs,"/home/c/papers/ensemble/mevsyn10.tex", c(23,22)) # Plain
+
+
+
+#==============================================================================
+
+dfs <- list(mevrealshufE, mevrealshufV,mevrealshufL)
+
+compareTwo(dfs,"/home/c/papers/ensemble/mevrealshuf0.tex", c(15,14)) # OzaBag
+compareTwo(dfs,"/home/c/papers/ensemble/mevrealshuf1.tex", c(17,16)) # OzaBagADWIN
+
+compareTwo(dfs,"/home/c/papers/ensemble/mevrealshuf2.tex", c(9,8)) # LevBagNoADWIN
+compareTwo(dfs,"/home/c/papers/ensemble/mevrealshuf3.tex", c(11,10)) #  LevBag
+
+compareTwo(dfs,"/home/c/papers/ensemble/mevrealshuf4.tex", c(2,1)) # ARF Optimised Parametrization
+
+compareTwo(dfs,"/home/c/papers/ensemble/mevrealshuf5.tex", c(19,18)) # OzaBoost
+compareTwo(dfs,"/home/c/papers/ensemble/mevrealshuf6.tex", c(21,20)) #  OzaBoostAdwin
+
+compareTwo(dfs,"/home/c/papers/ensemble/mevrealshuf7.tex", c(4,3)) #  ADOB
+compareTwo(dfs,"/home/c/papers/ensemble/mevrealshuf8.tex", c(7,6)) #  BOLE
+
+
+compareTwo(dfs,"/home/c/papers/ensemble/mevrealshuf9.tex", c(13,12)) # OnlineSmoothBoost
+
+compareTwo(dfs,"/home/c/papers/ensemble/mevrealshuf10.tex", c(23,22)) # Plain
+
 
 
 #=============================================================================
@@ -108,27 +175,6 @@ compareTwo(mevrealE,"/home/c/papers/ensemble/mevreal10.tex", c(23,22)) # Plain
 
 
 
-#==============================================================================
-
-
-compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf0.tex", c(15,14)) # OzaBag
-compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf1.tex", c(17,16)) # OzaBagADWIN
-
-compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf2.tex", c(9,8)) # LevBagNoADWIN
-compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf3.tex", c(11,10)) #  LevBag
-
-compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf4.tex", c(2,1)) # ARF Optimised Parametrization
-
-compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf5.tex", c(19,18)) # OzaBoost
-compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf6.tex", c(21,20)) #  OzaBoostAdwin
-
-compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf7.tex", c(4,3)) #  ADOB
-compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf8.tex", c(7,6)) #  BOLE
-
-
-compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf9.tex", c(13,12)) # OnlineSmoothBoost
-
-compareTwo(mevrealshufE,"/home/c/papers/ensemble/mevrealshuf10.tex", c(23,22)) # Plain
 
 
 
@@ -182,19 +228,6 @@ write.table(mevrealshufT, "/home/c/papers/ensemble/realshufCPUtimes.tex", quote=
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 #==============================================================================
 # Now let's do ranks
 #==============================================================================
@@ -232,13 +265,13 @@ file.show("/home/c/papers/ensemble/mevrealshuf3.tex")
 #==============================================================================
 #==============================================================================
 
-menrsyn <- read_csv("/home/c/exp_dir_results/output/outmetaeftdnorevisionsynthetic")
+menrsyn <- read_csv("/home/c/results2/output/outmetaeftdnorevisionsynthetic")
 menrsynE <- menrsyn[menrsyn$X2=="E",]
 
-menrreal <- read_csv("/home/c/exp_dir_results/output/outmetaeftdnorevisionreal")
+menrreal <- read_csv("/home/c/results2/output/outmetaeftdnorevisionreal")
 menrrealE <- menrreal[menrreal$X2=="E",]
 
-menrrealshuf <- read_csv("/home/c/exp_dir_results/output/outmetaeftdnorevisionrealshuf")
+menrrealshuf <- read_csv("/home/c/results2/output/outmetaeftdnorevisionrealshuf")
 menrrealshufE <- menrrealshuf[menrrealshuf$X2=="E",]
 
 # Let's also remove the repetitive datasets
