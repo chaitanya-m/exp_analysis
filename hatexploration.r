@@ -28,8 +28,6 @@ colnames(ohssE)[3:26] <- col2
 write.table(dfkeysyn, "/home/c/papers/unspecified_features/syntheticStreamsKey.tex", quote=FALSE, col.names = FALSE, sep = ' & ', eol = " \\\\\n",)
 
 
-
-
 # Just HAT and HAT -A
 #comparisonTable(c(19,5),ohssE,"/home/c/papers/unspecified_features/table1.tex")
 compareTwo(ohssE,"/home/c/papers/unspecified_features/table1.tex", c(19,5))

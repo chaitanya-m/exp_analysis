@@ -9,52 +9,73 @@ realDataStreams <- c("airlines", "aws---price-discretized", "chess", "covertype"
               "poker", "pucrio", "sensor---home-activity", "sensor---CO-discretized", "skin", 
               "tnelec", "wisdm")
 
-compareTwo <- function(fulldf, output, compareRows){
+compareTwo <- function(dfs, output, compareRows){
   
-  df <- fulldf[compareRows,] #just the rows to compare
-  dft <- t(df[,c(-2)]) #transpose
-  colnames(dft) <- as.character(dft[1,]) # first row as column names
-  dft<-dft[-1,] # get rid of first row
-  dft2<-apply(dft, 2, function(x) as.numeric(as.character(x))) # convert data to numeric in order to round
-  rownames(dft2)<-rownames(dft)# apply loses rownames
-  colnames(dft2)<-colnames(dft)
-  dft2<-round(dft2,5) # round
+  dfError<-dfs[[1]]
+  dfVar<-dfs[[2]] 
+  dfLeaves<-dfs[[3]]
   
+  transpose_and_round <- function(df, precision) {
+    df0 <- df[compareRows,] #just the rows to compare
+    dft0 <- t(df0[,c(-2)]) #transpose, remove error/time/stddev/leaves indicator from table
+    colnames(dft0) <- as.character(dft0[1,]) # first row as column names
+    dft0<-dft0[-1,] # get rid of first row
+    dft1<-apply(dft0, 2, function(x) as.numeric(as.character(x))) # convert data to numeric in order to round
+    rownames(dft1)<-rownames(dft0) # apply loses rownames
+    colnames(dft1)<-colnames(dft0)
+    dft1<-round(dft1,precision) # round
+    return(dft1)
+  }
+  
+  dftE2 <- transpose_and_round(dfError, 5)
+  dftV2 <- transpose_and_round(dfVar, 5)
+  dftL2 <- transpose_and_round(dfLeaves, 0)
   # find the first occurrence of minimum in each row
-  #first_min_occurrence_pos <- matrix(c(1:nrow(dft2), apply(dft2, 1, which.min)), ncol=y) 
+  #first_min_occurrence_pos <- matrix(c(1:nrow(dftE2), apply(dftE2, 1, which.min)), ncol=y) 
   
   # find the minimum in each row
-  all_min <- apply(dft2, 1, min)
+  all_min <- apply(dftE2, 1, min)
   
-  # find all occurrences of minimum in each row
+  # find all occurrences of minimum in each row for error
   minima<-list()
-  for (row in 1:nrow(dft2)) { 
-    minima[[row]]<-which(all_min[row]==dft2[row,])
+  for (row in 1:nrow(dftE2)) { 
+    minima[[row]]<-which(all_min[row]==dftE2[row,])
   }
-  #minima_matrix <- cbind(c(1:nrow(dft2)), minima)
+  #minima_matrix <- cbind(c(1:nrow(dftE2)), minima)
   
   # convert back to character
-  dft <- data.frame(apply(dft2, 2, function(x) as.character(as.numeric(x))), stringsAsFactors = FALSE) 
-  rownames(dft)<-rownames(dft2)# apply loses rownames
-  colnames(dft)<-colnames(dft2)
+  to_character <- function(dft2){
+    dft <- data.frame(apply(dft2, 2, function(x) as.character(as.numeric(x))), stringsAsFactors = FALSE)
+    rownames(dft)<-rownames(dft2)# apply loses rownames
+    colnames(dft)<-colnames(dft2)
+    return(dft)
+  }
+  dftE <- to_character(dftE2)
+  dftV <- to_character(dftV2)
+  dftL <- to_character(dftL2)
+  dftL[dftL=="-1"]<-""
+  
+  
+  
   #all minimums in bold, joint minima in cursive bold
   minima
   minima[[1]][2]
   
   # all minima are bold, and if there is more than one minimum in a row, it is italicized
-  for(row in 1:nrow(dft)){
-    dft[row,minima[[row]]]<-paste("\\textbf{",dft[row,minima[[row]]],"}", sep="")
+  for(row in 1:nrow(dftE)){
+    dftE[row,minima[[row]]]<-paste("\\textbf{",dftE[row,minima[[row]]],"}", sep="")
     if(length(minima[[row]])>1){
       for (minindex in minima[[row]]){
-        dft[row,minindex]<-paste("\\textit{",dft[row,minindex],"}", sep="")
+        dftE[row,minindex]<-paste("\\textit{",dftE[row,minindex],"}", sep="")
       }
     }
   }
   
+
   # now add up unique wins per column
   uniquewins<-list()
   uniqueminima<-minima[lapply(minima, length) == 1]
-  for(col in 1:ncol(dft)){
+  for(col in 1:ncol(dftE)){
     uniquewins[[col]]<-sum(uniqueminima==col)
   }
   
@@ -62,13 +83,22 @@ compareTwo <- function(fulldf, output, compareRows){
   uniquewins<-list()
   uniqueminima<-minima[lapply(minima, length) == 1]
   #nonuniqueminima<-table(unlist(lapply(minima, unique))) # for multiple minima
-  for(col in 1:ncol(dft)){
+  for(col in 1:ncol(dftE)){
     uniquewins[[col]]<-sum(uniqueminima==col)
   }
   
   #only for 1 on 1 comparisons... test statistics
   #formatting
-  uniquewinsPrint<-list(paste("\\textbf{", uniquewins[[1]],"}", sep=""),paste("\\textbf{", uniquewins[[2]], "}",sep=""))
+  uniquewinsPrint<-list(paste("\\multicolumn{3}{l?}{\\textbf{", uniquewins[[1]],"}}",sep=""),paste("\\multicolumn{3}{l}{\\textbf{", uniquewins[[2]], "}}",sep=""))
+  
+  # create the df to print, concatenate error with std dev and leaves
+  dfPrint <- dftE
+  #dfPrint <- replace(dfPrint, dfPrint=="-1", "")
+  
+  for(row in 1:nrow(dfPrint)){
+    dfPrint[row, 1] <- paste(dfPrint[row,1], dftV[row,1], dftL[row,1], sep=" & ")
+    dfPrint[row, 2] <- paste(dfPrint[row,2], dftV[row,2], dftL[row,2], sep=" & ")
+  }
   
   
   if(uniquewins[[2]] + uniquewins[[1]] > 0){
@@ -84,33 +114,40 @@ compareTwo <- function(fulldf, output, compareRows){
     confint<-paste("Confidence Interval: ", round(binomtest[["conf.int"]][1],5), "---", round(binomtest[["conf.int"]][2],5))
     
     #formatting
-    dft<-rbind(dft,"\\bottomrule"=list("",""))
-    dft<-rbind(dft,"\\begin{tabularx}{\\linewidth}{Xr}
-		A \\textbf{bold} value indicates higher accuracy, and \\textit{\\textbf{bold italics}} indicate a tie.  & \\textbf{Unique Wins}
-		\\end{tabularx}" = uniquewinsPrint)
-    dft<-rbind(dft,"\\cmidrule[0.4pt](lr){2-3}"=list("",""))
-    dft<-rbind(dft, "\\begin{tabularx}{\\linewidth}{Xr} The test is a one-tailed binomial test to determine the probability that the strategy in the rightmost column would achieve so many wins if wins and losses were equiprobable. & \\textbf{Test Statistics} \\end{tabularx}" 
-               = list(paste("\\textbf{", pvalue, "}",sep=""), paste("\\textbf{", confint,"}",sep="")))
+    dfPrint<-rbind(dfPrint,"\\midrule\n\\textbf{Unique Wins}" = uniquewinsPrint) # this is a rowname col + 2 columns in dfPrint... being configured to fit a latex table with 7 columns
+    #dfPrint<-rbind(dfPrint,"\\midrule\n\\multicolumn{4}{p{10cm}}{A \\textbf{bold} value indicates higher accuracy, and \\textit{\\textbf{bold italics}} indicate a tie.}"=list("\\multicolumn{1}{l}{}","\\multicolumn{1}{l}{}\\\\\n") )
+    #dfPrint<-rbind(dfPrint, "\\multicolumn{1}{l}{\\begin{tabularx}{0.6\\textwidth}{Xr} The test is a one-tailed binomial test to determine the probability that the strategy in the rightmost column would achieve so many wins if wins and losses were equiprobable. \\end{tabularx}} \\multicolumn{4}{l}{} \\textbf{Test Statistics}" 
+    #           = list(paste("\\textbf{", pvalue, "}",sep=""), paste("\\textbf{", confint,"}",sep="")))
+    dfPrint<-rbind(dfPrint,"\\midrule\\multicolumn{4}{p{10cm}}{\\begin{tabular}{p{9cm}} A \\textbf{bold} value indicates higher accuracy, and \\textit{\\textbf{bold italics}} indicate a tie.  \\\\ \\\\ The test is a one-tailed binomial test to determine the probability that the strategy in the rightmost column would achieve so many wins if wins and losses were equiprobable. \\end{tabular}}  
+                   & \\textbf{Test Statistics}" 
+                   =   list(paste("\\textbf{", pvalue, "}",sep=""), paste("\\textbf{", confint,"}",sep="")))
+    #dfPrint<-rbind(dfPrint, "\\multicolumn{4}{p{8.0cm}}{The test is a one-tailed binomial test to determine the probability that the strategy in the rightmost column would achieve so many wins if wins and losses were equiprobable.} = list("\\multicolumn{1}{l}{}","\\multicolumn{1}{l}{}")
+    #dfPrint<-rbind(dfPrint,"\\cmidrule[0.4pt](lr){2-3}"=list("",""))
+    #dfPrint<-rbind(dfPrint, "\begin{tabularx}{\\linewidth}{Xr} The test is a one-tailed binomial test to determine the probability that the strategy in the rightmost column would achieve so many wins if wins and losses were equiprobable. & \\textbf{Test Statistics} \\end{tabularx}" 
+    #           = list(paste("\\textbf{", pvalue, "}",sep=""), paste("\\textbf{", confint,"}",sep="")))
   }
-  write.table(dft,output, sep=" & ", quote=FALSE, col.names = FALSE,eol = " \\\\\n")
+  
+  
+  write.table(dfPrint, output, sep=" & ", quote=FALSE, col.names = FALSE,eol = " \\\\\n") # lists of row elements will be separated by &
+  dfPrint
   #file.show(output)  
   
 }
 
 
 
-compareAll <- function(fulldf){
-  #print(fulldf[,1])
+compareAll <- function(dfError){
+  #print(dfError[,1])
   fullcomparison_df <- data.frame(Learner1=character(), Learner2=character(), Learner2wins=integer(), Totalwins=integer(), pvalue=double(), stringsAsFactors=FALSE)
   print(fullcomparison_df)
-  for (row1 in 1:nrow(fulldf)) {
-    for (row2 in 1:nrow(fulldf)) {
+  for (row1 in 1:nrow(dfError)) {
+    for (row2 in 1:nrow(dfError)) {
       if(row1 != row2){
         #print("======================================================================")
         
         # just the rows to compare
         
-        compare_df <- fulldf[c(row1,row2),]
+        compare_df <- dfError[c(row1,row2),]
         #print(compare_df[,1])
         #print(compare_df)
         compare_df <- compare_df[,-1]         # without column names
@@ -149,9 +186,9 @@ compareAll <- function(fulldf){
           binomtest<-binom.test(uniqueWinsRow2, uniqueWinsRow2 + uniqueWinsRow1, (1/2), alternative = "greater")
           #print(binomtest$p.value)
         }
-        # print(c(fulldf[row1,1],fulldf[row2,1]))
+        # print(c(dfError[row1,1],dfError[row2,1]))
         fullcomparison_df <- rbind(fullcomparison_df, 
-                                   data.frame(Learner1=fulldf[[row1,1]], Learner2=fulldf[[row2,1]], 
+                                   data.frame(Learner1=dfError[[row1,1]], Learner2=dfError[[row2,1]], 
                                               Learner2wins=uniqueWinsRow2, 
                                               Totalwins=uniqueWinsRow2 + uniqueWinsRow1, 
                                               pvalue=binomtest$p.value))
