@@ -1,8 +1,9 @@
 # first read the real and synthetic csvs
 library(readr)
 source("compareLearners.r")
+setwd("~/exp_analysis")
 
-ohss<- read_csv("/home/c/exp_dir_results/output/outhatsynshuf")
+ohss<- read_csv("/home/c/results2/output/outhatsynshuf")
 
 nrow(ohss)
 
@@ -13,10 +14,18 @@ colnames(ohss)[names(ohss) == "X1"] <- "Learners"
 colnames(ohss)[names(ohss) == "X2"] <- "Performance"
 
 ohssE <- ohss[ohss$Performance=="E",]
+ohssV <- ohss[ohss$Performance=="V",]
+ohssL <- ohss[ohss$Performance=="L",]
+
+
+
 rownames(ohssE) <- NULL # renumber the rows without skips
+rownames(ohssV) <- NULL # renumber the rows without skips
+rownames(ohssL) <- NULL # renumber the rows without skips
+
 
 # Let's also remove the repetitive datasets - too many hyperplanes. keep the ones parameterized similarly to RBF.
-ohssE <- ohssE[,-c(11,14)]
+#ohssE <- ohssE[,-c(11,14)] - already removed in results
 
 col1 <- colnames(ohssE)[3:26]
 col2 <- syntheticDataStreams
@@ -24,62 +33,67 @@ col2 <- syntheticDataStreams
 dfkeysyn <- data.frame(col1,col2)
 
 colnames(ohssE)[3:26] <- col2
+colnames(ohssV)[3:26] <- col2
+colnames(ohssL)[3:26] <- col2
+
 
 write.table(dfkeysyn, "/home/c/papers/unspecified_features/syntheticStreamsKey.tex", quote=FALSE, col.names = FALSE, sep = ' & ', eol = " \\\\\n",)
 
+dfs = list(ohssE, ohssV, ohssL)
 
 # Just HAT and HAT -A
 #comparisonTable(c(19,5),ohssE,"/home/c/papers/unspecified_features/table1.tex")
-compareTwo(ohssE,"/home/c/papers/unspecified_features/table1.tex", c(19,5))
+compareTwo(dfs,"/home/c/papers/unspecified_features/table1.tex", c(19,5))
+compareTwo(dfs,"/home/c/papers/unspecified_features/table100.tex", c(4,5))
 
 # Just HAT -A -B and HAT -A (multiple alternates also vote)
-compareTwo(ohssE,"/home/c/papers/unspecified_features/table2.tex", c(4,5))
+compareTwo(dfs,"/home/c/papers/unspecified_features/table2.tex", c(4,5))
 
 # HAT -A -B -H and HAT -A -B (multiple alternates also vote, but single leaf alternates do not, and just multiple alternates vote)
-compareTwo(ohssE,"/home/c/papers/unspecified_features/table3.tex", c(3,4))
+compareTwo(dfs,"/home/c/papers/unspecified_features/table3.tex", c(3,4))
 
 
 # HAT -A -B -H and HAT -A -B -H -I (multiple alternates also vote, but single leaf alternates do not; and leaf weighting on)
-compareTwo(ohssE,"/home/c/papers/unspecified_features/table4.tex", c(3,2))
+compareTwo(dfs,"/home/c/papers/unspecified_features/table4.tex", c(3,2))
 #table <- ohssE[c(3,2),]
 
 # HAT and HAT -E (getweightseen instead of nodeTime)
-compareTwo(ohssE,"/home/c/papers/unspecified_features/table5.tex", c(19,17))
+compareTwo(dfs,"/home/c/papers/unspecified_features/table5.tex", c(19,17))
 #table <- ohssE[c(19,17),]
 
 # HAT and HAT -C (resplitting on nominals)
-compareTwo(ohssE,"/home/c/papers/unspecified_features/table6.tex", c(19,15))
+compareTwo(dfs,"/home/c/papers/unspecified_features/table6.tex", c(19,15))
 #table <- ohssE[c(19,15),]
 
 # HAT and HAT -D (no averaging infogain)
-compareTwo(ohssE,"/home/c/papers/unspecified_features/table7.tex", c(19,16))
+compareTwo(dfs,"/home/c/papers/unspecified_features/table7.tex", c(19,16))
 #table <- ohssE[c(19,16),]
 
 # HAT -CDE and HAT -CDE -F(vfdt behaviors, and top level replacement behavior)
-compareTwo(ohssE,"/home/c/papers/unspecified_features/table8.tex", c(14,12))
+compareTwo(dfs,"/home/c/papers/unspecified_features/table8.tex", c(14,12))
 #table <- ohssE[c(14,12),]
 
 
 # HAT -CDE and HAT -CDE -G(vfdt behaviors, and alternate replacement behavior)
-compareTwo(ohssE,"/home/c/papers/unspecified_features/table9.tex", c(14,13))
+compareTwo(dfs,"/home/c/papers/unspecified_features/table9.tex", c(14,13))
 #table <- ohssE[c(14,13),]
 
 #	-l (trees.HAT -C -D -E -A -B -H -I) and 7	-l (trees.HAT -C -D -E -A -B -H -I -F -G) (without and with alternate replacement behavior)
-compareTwo(ohssE,"/home/c/papers/unspecified_features/table10.tex", c(7,6))
+compareTwo(dfs,"/home/c/papers/unspecified_features/table10.tex", c(7,6))
 #table <- ohssE[c(7,6),]
 
 #	HAT and HAT -C -D -E (without and with VFDT undocumented behaviors)
-compareTwo(ohssE,"/home/c/papers/unspecified_features/table11.tex", c(19,14))
+compareTwo(dfs,"/home/c/papers/unspecified_features/table11.tex", c(19,14))
 #table <- ohssE[c(19,14),]
 
 # Just HAT and HAT -C -D -E -A -B -H -I -F -G
-compareTwo(ohssE,"/home/c/papers/unspecified_features/table12.tex", c(19,6))
+compareTwo(dfs,"/home/c/papers/unspecified_features/table12.tex", c(19,6))
 
 
 
 
 #======================================================================================================================================
-ovv<- read_csv("/home/c/exp_dir_results/output/outvfdtvariants")
+ovv<- read_csv("/home/c/results2/output/outvfdtvariantssynshuf")
 
 nrow(ovv)
 
@@ -90,33 +104,42 @@ colnames(ovv)[names(ovv) == "X1"] <- "Learners"
 colnames(ovv)[names(ovv) == "X2"] <- "Performance"
 
 ovvE <- ovv[ovv$Performance=="E",]
+ovvV <- ovv[ovv$Performance=="V",]
+ovvL <- ovv[ovv$Performance=="L",]
+
+
 rownames(ovvE) <- NULL # renumber the rows without skips
+rownames(ovvV) <- NULL # renumber the rows without skips
+rownames(ovvL) <- NULL # renumber the rows without skips
 
 # Let's also remove the repetitive datasets - too many hyperplanes. keep the ones parameterized similarly to RBF.
-ovvE <- ovvE[,-c(11,14)]
+#ohssE <- ohssE[,-c(11,14)] - already removed in results
 
 colnames(ovvE)[3:26] <- col2
+colnames(ovvV)[3:26] <- col2
+colnames(ovvL)[3:26] <- col2
 
 
+dfs = list(ovvE, ovvV, ovvL)
 
 # VFDT and VFDT -C (resplitting)
-compareTwo(ovvE,"/home/c/papers/unspecified_features/table101.tex", c(6,3))
+compareTwo(dfs,"/home/c/papers/unspecified_features/table101.tex", c(6,3))
 #table <- ovvE[c(5,2),]
 
 # VFDT and VFDT -D (no infogain averaging)
-compareTwo(ovvE,"/home/c/papers/unspecified_features/table102.tex", c(6,4))
+compareTwo(dfs,"/home/c/papers/unspecified_features/table102.tex", c(6,4))
 #table <- ovvE[c(5,3),]
 
 # VFDT and VFDT -E (weight at leaf instead of nodetime)
-compareTwo(ovvE,"/home/c/papers/unspecified_features/table103.tex", c(6,5))
+compareTwo(dfs,"/home/c/papers/unspecified_features/table103.tex", c(6,5))
 #table <- ovvE[c(5,4),]
 
 # VFDT and VFDT -C -D -E
-compareTwo(ovvE,"/home/c/papers/unspecified_features/table104.tex", c(6,1))
+compareTwo(dfs,"/home/c/papers/unspecified_features/table104.tex", c(6,1))
 #table <- ovvE[c(5,1),]
 
 # VFDT and VFDT -C -J (clear node instead of resplitting)
-compareTwo(ovvE,"/home/c/papers/unspecified_features/table105.tex", c(6,2))
+compareTwo(dfs,"/home/c/papers/unspecified_features/table105.tex", c(6,2))
 #table <- ovvE[c(5,1),]
 
 

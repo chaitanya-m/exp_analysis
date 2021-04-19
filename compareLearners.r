@@ -58,8 +58,8 @@ compareTwo <- function(dfs, output, compareRows){
   
   
   #all minimums in bold, joint minima in cursive bold
-  minima
-  minima[[1]][2]
+  #minima
+  #minima[[1]][2]
   
   # all minima are bold, and if there is more than one minimum in a row, it is italicized
   for(row in 1:nrow(dftE)){
@@ -129,7 +129,7 @@ compareTwo <- function(dfs, output, compareRows){
   
   
   write.table(dfPrint, output, sep=" & ", quote=FALSE, col.names = FALSE,eol = " \\\\\n") # lists of row elements will be separated by &
-  dfPrint
+  #dfPrint
   #file.show(output)  
   
 }
