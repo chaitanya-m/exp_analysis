@@ -14,8 +14,14 @@ compareTwo <- function(dfs, output, compareRows){
   dfError<-dfs[[1]]
   dfVar<-dfs[[2]] 
   dfLeaves<-dfs[[3]]
-  
+
   transpose_and_round <- function(df, precision) {
+
+    
+    if(is.na(df)[[1]] == TRUE){
+      return(NA)
+    }
+    
     df0 <- df[compareRows,] #just the rows to compare
     dft0 <- t(df0[,c(-2)]) #transpose, remove error/time/stddev/leaves indicator from table
     colnames(dft0) <- as.character(dft0[1,]) # first row as column names
@@ -51,9 +57,24 @@ compareTwo <- function(dfs, output, compareRows){
     return(dft)
   }
   dftE <- to_character(dftE2)
-  dftV <- to_character(dftV2)
-  dftL <- to_character(dftL2)
-  dftL[dftL=="-1"]<-""
+  dftV <- if (is.na(dftV2)[[1]]) NA else to_character(dftV2)
+  dftL <- if (is.na(dftL2)[[1]]) NA else to_character(dftL2)
+  
+  if(!is.na(dftL)[[1]]){
+    x<-count(dftL[dftL=="-1"])
+    if (nrow(x)>0){# x['freq'][[1]] > 0) { # leaves values are -1, ie not present, so make the df an NA
+      dftL <- NA
+    }    
+  }
+    
+    
+
+    
+  # if( > 0){
+  #   print(x[1,1])    
+  # }
+
+  #dftL[dftL=="-1"]<-""
   
   
   
@@ -87,19 +108,31 @@ compareTwo <- function(dfs, output, compareRows){
     uniquewins[[col]]<-sum(uniqueminima==col)
   }
   
-  #only for 1 on 1 comparisons... test statistics
-  #formatting
-  uniquewinsPrint<-list(paste("\\multicolumn{3}{l?}{\\textbf{", uniquewins[[1]],"}}",sep=""),paste("\\multicolumn{3}{l}{\\textbf{", uniquewins[[2]], "}}",sep=""))
+
   
   # create the df to print, concatenate error with std dev and leaves
   dfPrint <- dftE
   #dfPrint <- replace(dfPrint, dfPrint=="-1", "")
   
   for(row in 1:nrow(dfPrint)){
-    dfPrint[row, 1] <- paste(dfPrint[row,1], dftV[row,1], dftL[row,1], sep=" & ")
-    dfPrint[row, 2] <- paste(dfPrint[row,2], dftV[row,2], dftL[row,2], sep=" & ")
+
+    
+    if (is.na(dftL)[[1]] && is.na(dftV)[[1]]){
+    }   
+        
+    else if (is.na(dftL)[[1]]){ # no leaf count for ARF
+      dfPrint[row, 1] <- paste(dfPrint[row,1], dftV[row,1], sep=" & ")
+      dfPrint[row, 2] <- paste(dfPrint[row,2], dftV[row,2], sep=" & ")      
+    }
+    else if (is.na(dftV)[[1]]){ # no variance for unshuffled streams
+      dfPrint[row, 1] <- paste(dfPrint[row,1], dftL[row,1], sep=" & ")
+      dfPrint[row, 2] <- paste(dfPrint[row,2], dftL[row,2], sep=" & ")      
+    }
+    else{
+      dfPrint[row, 1] <- paste(dfPrint[row,1], dftV[row,1], dftL[row,1], sep=" & ")
+      dfPrint[row, 2] <- paste(dfPrint[row,2], dftV[row,2], dftL[row,2], sep=" & ")
+    }
   }
-  
   
   if(uniquewins[[2]] + uniquewins[[1]] > 0){
     
@@ -114,13 +147,38 @@ compareTwo <- function(dfs, output, compareRows){
     confint<-paste("Confidence Interval: ", round(binomtest[["conf.int"]][1],5), "---", round(binomtest[["conf.int"]][2],5))
     
     #formatting
-    dfPrint<-rbind(dfPrint,"\\midrule\n\\textbf{Unique Wins}" = uniquewinsPrint) # this is a rowname col + 2 columns in dfPrint... being configured to fit a latex table with 7 columns
-    #dfPrint<-rbind(dfPrint,"\\midrule\n\\multicolumn{4}{p{10cm}}{A \\textbf{bold} value indicates higher accuracy, and \\textit{\\textbf{bold italics}} indicate a tie.}"=list("\\multicolumn{1}{l}{}","\\multicolumn{1}{l}{}\\\\\n") )
+    
+    
+    if (is.na(dftV) && is.na(dftL)){
+      #only for 1 on 1 comparisons... test statistics
+      uniquewinsPrint<-list(paste("\\multicolumn{1}{l?}{\\textbf{", uniquewins[[1]],"}}",sep=""),paste("\\multicolumn{1}{l}{\\textbf{", uniquewins[[2]], "}}",sep=""))
+      dfPrint<-rbind(dfPrint,"\\midrule\n\\textbf{Unique Wins}" = uniquewinsPrint) # this is a rowname col + 2 columns in dfPrint... being configured to fit a latex table with 5 columns
+      dfPrint<-rbind(dfPrint,"\\midrule\\begin{tabularx}{\\linewidth}{Xr} A \\textbf{bold} value indicates higher accuracy, and \\textit{\\textbf{bold italics}} indicate a tie.  \\\\ \\\\ The test is a one-tailed binomial test to determine the probability that the strategy in the rightmost column would achieve so many wins if wins and losses were equiprobable. & \\textbf{Test Statistics} \\end{tabularx}" 
+                     =   list(paste("\\textbf{", pvalue, "}",sep=""), paste("\\textbf{", confint,"}",sep="")))
+      
+    }    
+    
+    else if (is.na(dftV) || is.na(dftL)){
+      #only for 1 on 1 comparisons... test statistics
+      uniquewinsPrint<-list(paste("\\multicolumn{2}{l?}{\\textbf{", uniquewins[[1]],"}}",sep=""),paste("\\multicolumn{2}{l}{\\textbf{", uniquewins[[2]], "}}",sep=""))
+      dfPrint<-rbind(dfPrint,"\\midrule\n\\textbf{Unique Wins}" = uniquewinsPrint) # this is a rowname col + 2 columns in dfPrint... being configured to fit a latex table with 5 columns
+      dfPrint<-rbind(dfPrint,"\\midrule\\multicolumn{2}{p{10cm}}{\\begin{tabular}{p{9cm}} A \\textbf{bold} value indicates higher accuracy, and \\textit{\\textbf{bold italics}} indicate a tie.  \\\\ \\\\ The test is a one-tailed binomial test to determine the probability that the strategy in the rightmost column would achieve so many wins if wins and losses were equiprobable. \\end{tabular}}  
+                   & \\textbf{Test Statistics}" 
+                     =   list(paste("\\textbf{", pvalue, "}",sep=""), paste("\\textbf{", confint,"}",sep="")))
+
+    } else {
+      #only for 1 on 1 comparisons... test statistics
+      uniquewinsPrint<-list(paste("\\multicolumn{3}{l?}{\\textbf{", uniquewins[[1]],"}}",sep=""),paste("\\multicolumn{3}{l}{\\textbf{", uniquewins[[2]], "}}",sep=""))
+      dfPrint<-rbind(dfPrint,"\\midrule\n\\textbf{Unique Wins}" = uniquewinsPrint) # this is a rowname col + 2 columns in dfPrint... being configured to fit a latex table with 7 columns
+      dfPrint<-rbind(dfPrint,"\\midrule\\multicolumn{4}{p{10cm}}{\\begin{tabular}{p{9cm}} A \\textbf{bold} value indicates higher accuracy, and \\textit{\\textbf{bold italics}} indicate a tie.  \\\\ \\\\ The test is a one-tailed binomial test to determine the probability that the strategy in the rightmost column would achieve so many wins if wins and losses were equiprobable. \\end{tabular}}  
+                   & \\textbf{Test Statistics}" 
+                     =   list(paste("\\textbf{", pvalue, "}",sep=""), paste("\\textbf{", confint,"}",sep="")))
+    }
+    
+        #dfPrint<-rbind(dfPrint,"\\midrule\n\\multicolumn{4}{p{10cm}}{A \\textbf{bold} value indicates higher accuracy, and \\textit{\\textbf{bold italics}} indicate a tie.}"=list("\\multicolumn{1}{l}{}","\\multicolumn{1}{l}{}\\\\\n") )
     #dfPrint<-rbind(dfPrint, "\\multicolumn{1}{l}{\\begin{tabularx}{0.6\\textwidth}{Xr} The test is a one-tailed binomial test to determine the probability that the strategy in the rightmost column would achieve so many wins if wins and losses were equiprobable. \\end{tabularx}} \\multicolumn{4}{l}{} \\textbf{Test Statistics}" 
     #           = list(paste("\\textbf{", pvalue, "}",sep=""), paste("\\textbf{", confint,"}",sep="")))
-    dfPrint<-rbind(dfPrint,"\\midrule\\multicolumn{4}{p{10cm}}{\\begin{tabular}{p{9cm}} A \\textbf{bold} value indicates higher accuracy, and \\textit{\\textbf{bold italics}} indicate a tie.  \\\\ \\\\ The test is a one-tailed binomial test to determine the probability that the strategy in the rightmost column would achieve so many wins if wins and losses were equiprobable. \\end{tabular}}  
-                   & \\textbf{Test Statistics}" 
-                   =   list(paste("\\textbf{", pvalue, "}",sep=""), paste("\\textbf{", confint,"}",sep="")))
+
     #dfPrint<-rbind(dfPrint, "\\multicolumn{4}{p{8.0cm}}{The test is a one-tailed binomial test to determine the probability that the strategy in the rightmost column would achieve so many wins if wins and losses were equiprobable.} = list("\\multicolumn{1}{l}{}","\\multicolumn{1}{l}{}")
     #dfPrint<-rbind(dfPrint,"\\cmidrule[0.4pt](lr){2-3}"=list("",""))
     #dfPrint<-rbind(dfPrint, "\begin{tabularx}{\\linewidth}{Xr} The test is a one-tailed binomial test to determine the probability that the strategy in the rightmost column would achieve so many wins if wins and losses were equiprobable. & \\textbf{Test Statistics} \\end{tabularx}" 
