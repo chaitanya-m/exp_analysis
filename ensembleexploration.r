@@ -1,13 +1,14 @@
 # first read the real and synthetic csvs
 library(readr)
 library(plyr)
-source("compareLearners.r")
 setwd("~/exp_analysis")
+source("compareLearners.r")
 
 # mev is metaefdtvfdt. syn is synthetic (with drift), real is uci streams, realshuf is uci shuffled
 
 mevsyn <- read_csv("/home/c/results2/output/outmetaefdtvfdtsynshuf")
 mevreal <- read_csv("/home/c/results2/output/outmetaefdtvfdtreal")
+mevreal50 <- read_csv("/home/c/results2/output/outmetaefdtvfdtreal50")
 mevrealshuf <- read_csv("/home/c/results2/output/outmetaefdtvfdtrealshuf")
 
 clean_df<-function(df){
@@ -31,6 +32,10 @@ mevsynL <- clean_df(mevsyn[mevsyn$X2=="L",])
 mevrealE <- clean_df(mevreal[mevreal$X2=="E",])
 mevrealT <- clean_df(mevreal[mevreal$X2=="T",])
 mevrealL <- clean_df(mevreal[mevreal$X2=="L",])
+
+mevreal50E <- clean_df(mevreal50[mevreal50$X2=="E",])
+mevreal50T <- clean_df(mevreal50[mevreal50$X2=="T",])
+mevreal50L <- clean_df(mevreal50[mevreal50$X2=="L",])
 
 mevrealshufE <- clean_df(mevrealshuf[mevrealshuf$X2=="E",])
 mevrealshufT <- clean_df(mevrealshuf[mevrealshuf$X2=="T",])
@@ -91,99 +96,153 @@ col2real <- c("airlines", "aws---price-discretized", "chess", "covertype", "covp
           "tnelec", "wisdm")
 
 colnames(mevrealE)[3:22] <- col2real 
+colnames(mevreal50E)[3:22] <- col2real 
 colnames(mevrealshufE)[3:22] <- col2real
 
 colnames(mevrealT)[3:22] <- col2real 
+colnames(mevreal50T)[3:22] <- col2real 
 colnames(mevrealshufT)[3:22] <- col2real
 
 colnames(mevrealshufV)[3:22] <- col2real
 
 colnames(mevrealL)[3:22] <- col2real
+colnames(mevreal50L)[3:22] <- col2real 
 colnames(mevrealshufL)[3:22] <- col2real
 
+learners <- c("OzaBag","OzaBagAdwin", "LevBag without Adwin", "LevBag", "ARF", "OzaBoost", "OzaBoostAdwin", "ADOB", "BOLE", "OnlineSmoothBoost", "Plain (no ensemble)")
 
 # note: already tested and showed that levbag without levbag equals ozabag
 #=============================================================================
 # Now, redo tables and analysis without noRevisionEFDT
 #=============================================================================
 
+real_results_df = data.frame()
 
 dfs <- list(mevrealE, NA, mevrealL)
 
-compareTwo(dfs,"/home/c/papers/ensemble/mevreal0.tex", c(15,14)) # OzaBag
+real_results_df<-rbind(real_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevreal0.tex", c(15,14))) # OzaBag
+real_results_df<-rbind(real_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevreal1.tex", c(17,16))) # OzaBagADWIN
+
+real_results_df<-rbind(real_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevreal2.tex", c(9,8))) # LevBagNoADWIN
+real_results_df<-rbind(real_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevreal3.tex", c(11,10))) #  LevBag
+
+real_results_df<-rbind(real_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevreal4.tex", c(2,1))) # ARF Optimised Parametrization
+
+real_results_df<-rbind(real_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevreal5.tex", c(19,18))) # OzaBoost
+real_results_df<-rbind(real_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevreal6.tex", c(21,20))) #  OzaBoostAdwin
+
+real_results_df<-rbind(real_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevreal7.tex", c(4,3))) #  ADOB
+real_results_df<-rbind(real_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevreal8.tex", c(7,6))) #  BOLE
 
 
-compareTwo(dfs,"/home/c/papers/ensemble/mevreal1.tex", c(17,16)) # OzaBagADWIN
+real_results_df<-rbind(real_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevreal9.tex", c(13,12))) # OnlineSmoothBoost
 
-compareTwo(dfs,"/home/c/papers/ensemble/mevreal2.tex", c(9,8)) # LevBagNoADWIN
-compareTwo(dfs,"/home/c/papers/ensemble/mevreal3.tex", c(11,10)) #  LevBag
-
-compareTwo(dfs,"/home/c/papers/ensemble/mevreal4.tex", c(2,1)) # ARF Optimised Parametrization
-
-compareTwo(dfs,"/home/c/papers/ensemble/mevreal5.tex", c(19,18)) # OzaBoost
-compareTwo(dfs,"/home/c/papers/ensemble/mevreal6.tex", c(21,20)) #  OzaBoostAdwin
-
-compareTwo(dfs,"/home/c/papers/ensemble/mevreal7.tex", c(4,3)) #  ADOB
-compareTwo(dfs,"/home/c/papers/ensemble/mevreal8.tex", c(7,6)) #  BOLE
+real_results_df<-rbind(real_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevreal10.tex", c(23,22))) # Plain
+real_results_df
 
 
-compareTwo(dfs,"/home/c/papers/ensemble/mevreal9.tex", c(13,12)) # OnlineSmoothBoost
 
-compareTwo(dfs,"/home/c/papers/ensemble/mevreal10.tex", c(23,22)) # Plain
+
+
+
+
+real50_results_df = data.frame()
+
+dfs <- list(mevreal50E, NA, mevreal50L)
+
+real50_results_df<-rbind(real50_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevreal500.tex", c(15,14))) # OzaBag
+real50_results_df<-rbind(real50_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevreal501.tex", c(17,16))) # OzaBagADWIN
+
+real50_results_df<-rbind(real50_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevreal502.tex", c(9,8))) # LevBagNoADWIN
+real50_results_df<-rbind(real50_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevreal503.tex", c(11,10))) #  LevBag
+
+real50_results_df<-rbind(real50_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevreal504.tex", c(2,1))) # ARF Optimised Parametrization
+
+real50_results_df<-rbind(real50_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevreal505.tex", c(19,18))) # OzaBoost
+real50_results_df<-rbind(real50_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevreal506.tex", c(21,20))) #  OzaBoostAdwin
+
+real50_results_df<-rbind(real50_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevreal507.tex", c(4,3))) #  ADOB
+real50_results_df<-rbind(real50_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevreal508.tex", c(7,6))) #  BOLE
+
+
+real50_results_df<-rbind(real50_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevreal509.tex", c(13,12))) # OnlineSmoothBoost
+
+real50_results_df<-rbind(real50_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevreal5010.tex", c(23,22))) # Plain
+real50_results_df
+
+
+real_comparison_df = data.frame()
+
+real_comparison_df<-cbind(real_results_df[,3],real50_results_df[,3])
+rownames(real_comparison_df) = c("OzaBag", "OzaBagAdwin", "LevBagNoAdwin", "LevBag","ARF", "OzaBoost", "OzaBoostAdwin", "ADOB", "BOLE", "OnlineSmoothBoost", "Plain")
+colnames(real_comparison_df) = c("10-tree p-values", "50-tree p-values")
+
+
+
+
+
+
 warnings()
 #=============================================================================
 
 
-
+synthetic_results_df = data.frame()
 
 dfs <- list(mevsynE, mevsynV, mevsynL)
 
 
-compareTwo(dfs,"/home/c/papers/ensemble/mevsyn0.tex", c(15,14)) # OzaBag
-compareTwo(dfs,"/home/c/papers/ensemble/mevsyn1.tex", c(17,16)) # OzaBagADWIN
+synthetic_results_df<-rbind(synthetic_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevsyn0.tex", c(15,14))) # OzaBag
+synthetic_results_df<-rbind(synthetic_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevsyn1.tex", c(17,16))) # OzaBagADWIN
 
-compareTwo(dfs,"/home/c/papers/ensemble/mevsyn2.tex", c(9,8)) # LevBagNoADWIN
-compareTwo(dfs,"/home/c/papers/ensemble/mevsyn3.tex", c(11,10)) #  LevBag
+synthetic_results_df<-rbind(synthetic_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevsyn2.tex", c(9,8))) # LevBagNoADWIN
+synthetic_results_df<-rbind(synthetic_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevsyn3.tex", c(11,10))) #  LevBag
 
-compareTwo(dfs,"/home/c/papers/ensemble/mevsyn4.tex", c(2,1)) # ARF Optimised Parametrization
+synthetic_results_df<-rbind(synthetic_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevsyn4.tex", c(2,1))) # ARF Optimised Parametrization
 
-compareTwo(dfs,"/home/c/papers/ensemble/mevsyn5.tex", c(19,18)) # OzaBoost
-compareTwo(dfs,"/home/c/papers/ensemble/mevsyn6.tex", c(21,20)) #  OzaBoostAdwin
+synthetic_results_df<-rbind(synthetic_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevsyn5.tex", c(19,18))) # OzaBoost
+synthetic_results_df<-rbind(synthetic_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevsyn6.tex", c(21,20))) #  OzaBoostAdwin
 
-compareTwo(dfs,"/home/c/papers/ensemble/mevsyn7.tex", c(4,3)) #  ADOB
-compareTwo(dfs,"/home/c/papers/ensemble/mevsyn8.tex", c(7,6)) #  BOLE
+synthetic_results_df<-rbind(synthetic_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevsyn7.tex", c(4,3))) #  ADOB
+synthetic_results_df<-rbind(synthetic_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevsyn8.tex", c(7,6))) #  BOLE
 
-compareTwo(dfs,"/home/c/papers/ensemble/mevsyn9.tex", c(13,12)) # OnlineSmoothBoost
+synthetic_results_df<-rbind(synthetic_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevsyn9.tex", c(13,12))) # OnlineSmoothBoost
 
-compareTwo(dfs,"/home/c/papers/ensemble/mevsyn10.tex", c(23,22)) # Plain
+synthetic_results_df<-rbind(synthetic_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevsyn10.tex", c(23,22))) # Plain
 
-
+synthetic_results_df
 
 #==============================================================================
 
+realshuf_results_df = data.frame()
+
 dfs <- list(mevrealshufE, mevrealshufV,mevrealshufL)
 
-compareTwo(dfs,"/home/c/papers/ensemble/mevrealshuf0.tex", c(15,14)) # OzaBag
-compareTwo(dfs,"/home/c/papers/ensemble/mevrealshuf1.tex", c(17,16)) # OzaBagADWIN
+realshuf_results_df<-rbind(realshuf_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevrealshuf0.tex", c(15,14))) # OzaBag
+realshuf_results_df<-rbind(realshuf_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevrealshuf1.tex", c(17,16))) # OzaBagADWIN
 
-compareTwo(dfs,"/home/c/papers/ensemble/mevrealshuf2.tex", c(9,8)) # LevBagNoADWIN
-compareTwo(dfs,"/home/c/papers/ensemble/mevrealshuf3.tex", c(11,10)) #  LevBag
+realshuf_results_df<-rbind(realshuf_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevrealshuf2.tex", c(9,8))) # LevBagNoADWIN
+realshuf_results_df<-rbind(realshuf_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevrealshuf3.tex", c(11,10))) #  LevBag
 
-compareTwo(dfs,"/home/c/papers/ensemble/mevrealshuf4.tex", c(2,1)) # ARF Optimised Parametrization
+realshuf_results_df<-rbind(realshuf_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevrealshuf4.tex", c(2,1))) # ARF Optimised Parametrization
 
-compareTwo(dfs,"/home/c/papers/ensemble/mevrealshuf5.tex", c(19,18)) # OzaBoost
-compareTwo(dfs,"/home/c/papers/ensemble/mevrealshuf6.tex", c(21,20)) #  OzaBoostAdwin
+realshuf_results_df<-rbind(realshuf_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevrealshuf5.tex", c(19,18))) # OzaBoost
+realshuf_results_df<-rbind(realshuf_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevrealshuf6.tex", c(21,20))) #  OzaBoostAdwin
 
-compareTwo(dfs,"/home/c/papers/ensemble/mevrealshuf7.tex", c(4,3)) #  ADOB
-compareTwo(dfs,"/home/c/papers/ensemble/mevrealshuf8.tex", c(7,6)) #  BOLE
+realshuf_results_df<-rbind(realshuf_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevrealshuf7.tex", c(4,3))) #  ADOB
+realshuf_results_df<-rbind(realshuf_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevrealshuf8.tex", c(7,6))) #  BOLE
 
-compareTwo(dfs,"/home/c/papers/ensemble/mevrealshuf9.tex", c(13,12)) # OnlineSmoothBoost
+realshuf_results_df<-rbind(realshuf_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevrealshuf9.tex", c(13,12))) # OnlineSmoothBoost
 
-compareTwo(dfs,"/home/c/papers/ensemble/mevrealshuf10.tex", c(23,22)) # Plain
+realshuf_results_df<-rbind(realshuf_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevrealshuf10.tex", c(23,22))) # Plain
 
+realshuf_results_df
 
+#==============================================================================
+# summary
+#==============================================================================
 
-
+summary_df <- cbind(learners, real_results_df, realshuf_results_df, synthetic_results_df)
+write.table(summary_df, "/home/c/papers/ensemble/summary.tex", sep=" & ", quote=FALSE, col.names = FALSE, row.names = FALSE, eol = " \\\\\n") 
 
 #==============================================================================
 # cpu times

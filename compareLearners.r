@@ -92,14 +92,6 @@ compareTwo <- function(dfs, output, compareRows){
     }
   }
   
-
-  # now add up unique wins per column
-  uniquewins<-list()
-  uniqueminima<-minima[lapply(minima, length) == 1]
-  for(col in 1:ncol(dftE)){
-    uniquewins[[col]]<-sum(uniqueminima==col)
-  }
-  
   # now add up unique wins per column
   uniquewins<-list()
   uniqueminima<-minima[lapply(minima, length) == 1]
@@ -136,12 +128,19 @@ compareTwo <- function(dfs, output, compareRows){
   
   if(uniquewins[[2]] + uniquewins[[1]] > 0){
     
+    mcnemar_matrix <- c(0, uniquewins[[1]], uniquewins[[2]], 0)
+    dim(mcnemar_matrix) <- c(2,2)
+    print(mcnemar_matrix)
+    mcnemartest<-mcnemar.test(mcnemar_matrix)
+    print(mcnemartest[["p.value"]])
+    
     binomtest<-binom.test(uniquewins[[2]],uniquewins[[2]] + uniquewins[[1]], (1/2), alternative = "greater")
-    binomtest[["p.value"]]
+    print(binomtest[["p.value"]])
     binomtest[["conf.int"]]
     list(binomtest[["p.value"]],binomtest[["conf.int"]])
     
-    pvalue<-paste("p-value:", round(binomtest[["p.value"]],5))
+    pval<-round(binomtest[["p.value"]],5)
+    pvalue<-paste("p-value:", pval)
     if(round(binomtest[["p.value"]],5) == 0){pvalue<-paste("p-value:", "$<$", "0.00001")}
     
     confint<-paste("Confidence Interval: ", round(binomtest[["conf.int"]][1],5), "---", round(binomtest[["conf.int"]][2],5))
@@ -183,13 +182,16 @@ compareTwo <- function(dfs, output, compareRows){
     #dfPrint<-rbind(dfPrint,"\\cmidrule[0.4pt](lr){2-3}"=list("",""))
     #dfPrint<-rbind(dfPrint, "\begin{tabularx}{\\linewidth}{Xr} The test is a one-tailed binomial test to determine the probability that the strategy in the rightmost column would achieve so many wins if wins and losses were equiprobable. & \\textbf{Test Statistics} \\end{tabularx}" 
     #           = list(paste("\\textbf{", pvalue, "}",sep=""), paste("\\textbf{", confint,"}",sep="")))
+    
+  result_summary<-append(uniquewins,pval)
+    
   }
   
   
   write.table(dfPrint, output, sep=" & ", quote=FALSE, col.names = FALSE,eol = " \\\\\n") # lists of row elements will be separated by &
+  return(result_summary)
   #dfPrint
   #file.show(output)  
-  
 }
 
 
