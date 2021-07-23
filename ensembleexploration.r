@@ -175,7 +175,7 @@ real_comparison_df = data.frame()
 
 real_comparison_df<-cbind(real_results_df[,3],real50_results_df[,3])
 rownames(real_comparison_df) = c("OzaBag", "OzaBagAdwin", "LevBagNoAdwin", "LevBag","ARF", "OzaBoost", "OzaBoostAdwin", "ADOB", "BOLE", "OnlineSmoothBoost", "Plain")
-colnames(real_comparison_df) = c("10-tree p-values", "50-tree p-values")
+colnames(real_comparison_df) = c("50-tree p-values", "50-tree p-values")
 
 
 
