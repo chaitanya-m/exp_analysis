@@ -147,23 +147,24 @@ compareTwo <- function(dfs, output, compareRows){
     
     #formatting
     
+    # %\multicolumn{2}{p{10cm}}{\begin{tabular}{p{9cm}} A \textbf{bold} value indicates higher accuracy, and \textit{\textbf{bold italics}} indicate a tie.  \\ \\ The test is a one-tailed binomial test to determine the probability that the strategy in the rightmost column would achieve so many wins if wins and losses were equiprobable. \end{tabular}}  
+    # %                   & \textbf{Test Statistics} & \textbf{p-value: 0.00066} & \textbf{Confidence Interval:  0.68974 --- 1} \\
+    # \multicolumn{5}{l}{
+    #   A \textbf{bold} error value indicates higher accuracy, and \textit{\textbf{bold italics}} indicate a tie.}\\
+    # \multicolumn{5}{l}{\textbf{One-tailed binomial test statistics}: \textbf{p-value: 0.00066}; \textbf{Confidence Interval:  0.68974 -- 1}}
+    
     
     if (is.na(dftV) && is.na(dftL)){
       #only for 1 on 1 comparisons... test statistics
       uniquewinsPrint<-list(paste("\\multicolumn{1}{l?}{\\textbf{", uniquewins[[1]],"}}",sep=""),paste("\\multicolumn{1}{l}{\\textbf{", uniquewins[[2]], "}}",sep=""))
       dfPrint<-rbind(dfPrint,"\\midrule\n\\textbf{Unique Wins}" = uniquewinsPrint) # this is a rowname col + 2 columns in dfPrint... being configured to fit a latex table with 5 columns
-      dfPrint<-rbind(dfPrint,"\\midrule\\begin{tabularx}{\\linewidth}{Xr} A \\textbf{bold} value indicates higher accuracy, and \\textit{\\textbf{bold italics}} indicate a tie.  \\\\ \\\\ The test is a one-tailed binomial test to determine the probability that the strategy in the rightmost column would achieve so many wins if wins and losses were equiprobable. & \\textbf{Test Statistics} \\end{tabularx}" 
-                     =   list(paste("\\textbf{", pvalue, "}",sep=""), paste("\\textbf{", confint,"}",sep="")))
-      
+   
     }    
     
     else if (is.na(dftV) || is.na(dftL)){
       #only for 1 on 1 comparisons... test statistics
       uniquewinsPrint<-list(paste("\\multicolumn{2}{l?}{\\textbf{", uniquewins[[1]],"}}",sep=""),paste("\\multicolumn{2}{l}{\\textbf{", uniquewins[[2]], "}}",sep=""))
       dfPrint<-rbind(dfPrint,"\\midrule\n\\textbf{Unique Wins}" = uniquewinsPrint) # this is a rowname col + 2 columns in dfPrint... being configured to fit a latex table with 5 columns
-      dfPrint<-rbind(dfPrint,"\\midrule\\multicolumn{2}{p{10cm}}{\\begin{tabular}{p{9cm}} A \\textbf{bold} value indicates higher accuracy, and \\textit{\\textbf{bold italics}} indicate a tie.  \\\\ \\\\ The test is a one-tailed binomial test to determine the probability that the strategy in the rightmost column would achieve so many wins if wins and losses were equiprobable. \\end{tabular}}  
-                   & \\textbf{Test Statistics}" 
-                     =   list(paste("\\textbf{", pvalue, "}",sep=""), paste("\\textbf{", confint,"}",sep="")))
 
     } else {
       #only for 1 on 1 comparisons... test statistics
@@ -189,6 +190,18 @@ compareTwo <- function(dfs, output, compareRows){
   
   
   write.table(dfPrint, output, sep=" & ", quote=FALSE, col.names = FALSE,eol = " \\\\\n") # lists of row elements will be separated by &
+  
+  if (is.na(dftV) && is.na(dftL)){
+    #only for 1 on 1 comparisons... test statistics
+    write("\\midrule\\multicolumn{3}{l}{A \\textbf{bold} error value indicates higher accuracy, and \\textit{\\textbf{bold italics}} indicate a tie.}\\\\", output, append=TRUE)
+    write(paste("\\multicolumn{3}{l}{\\textbf{One-tailed binomial test statistics}: ", paste("\\textbf{", pvalue, "};",sep=""), " ", paste("\\textbf{", confint,"}",sep=""), "}\\\\"), output, append=TRUE)
+  } else if (is.na(dftV) || is.na(dftL)){
+    write("\\midrule\\multicolumn{5}{l}{A \\textbf{bold} error value indicates higher accuracy, and \\textit{\\textbf{bold italics}} indicate a tie.}\\\\", output, append=TRUE)
+    write(paste("\\multicolumn{5}{l}{\\textbf{One-tailed binomial test statistics}: ", paste("\\textbf{", pvalue, "};",sep=""), " ", paste("\\textbf{", confint,"}",sep=""), "}\\\\"), output, append=TRUE)
+  }
+  
+  
+  
   return(result_summary)
   #dfPrint
   #file.show(output)  

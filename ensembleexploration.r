@@ -118,7 +118,7 @@ learners <- c("OzaBag","OzaBagAdwin", "LevBag without Adwin", "LevBag", "ARF", "
 
 real_results_df = data.frame()
 
-dfs <- list(mevrealE, NA, mevrealL)
+dfs <- list(mevrealE, NA, NA)
 
 real_results_df<-rbind(real_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevreal0.tex", c(15,14))) # OzaBag
 real_results_df<-rbind(real_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevreal1.tex", c(17,16))) # OzaBagADWIN
@@ -188,7 +188,7 @@ warnings()
 
 synthetic_results_df = data.frame()
 
-dfs <- list(mevsynE, mevsynV, mevsynL)
+dfs <- list(mevsynE, mevsynV, NA)
 
 
 synthetic_results_df<-rbind(synthetic_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevsyn0.tex", c(15,14))) # OzaBag
@@ -215,7 +215,7 @@ synthetic_results_df
 
 realshuf_results_df = data.frame()
 
-dfs <- list(mevrealshufE, mevrealshufV,mevrealshufL)
+dfs <- list(mevrealshufE, mevrealshufV,NA)
 
 realshuf_results_df<-rbind(realshuf_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevrealshuf0.tex", c(15,14))) # OzaBag
 realshuf_results_df<-rbind(realshuf_results_df, compareTwo(dfs,"/home/c/papers/ensemble/mevrealshuf1.tex", c(17,16))) # OzaBagADWIN
