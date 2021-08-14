@@ -63,13 +63,13 @@ tidydfreal <- function(df){
 
 # This is MOA version of HAT with all unspecified features
 
-dfefdthatsyn<- read_csv("/home/c/exp_dir_results/output/outefdthatsynthetic")
-dfefdthatreal<- read_csv("/home/c/exp_dir_results/output/outefdthatreal")
-dfefdthatrealshuf<- read_csv("/home/c/exp_dir_results/output/outefdthatrealshuf")
+dfefdthatsyn<- read_csv("/home/c/results2/output/outefdthatsynthetic")
+dfefdthatreal<- read_csv("/home/c/results2/output/outefdthatreal")
+dfefdthatrealshuf<- read_csv("/home/c/results2/output/outefdthatrealshuf")
 
-dfhathateagersyn<- read_csv("/home/c/exp_dir_results/output/outhathateagersynthetic")
-dfhathateagerreal<- read_csv("/home/c/exp_dir_results/output/outhathateagerreal")
-dfhathateagerrealshuf<- read_csv("/home/c/exp_dir_results/output/outhathateagerrealshuf")
+dfhathateagersyn<- read_csv("/home/c/results2/output/outhathateagersynthetic")
+dfhathateagerreal<- read_csv("/home/c/results2/output/outhathateagerreal")
+dfhathateagerrealshuf<- read_csv("/home/c/results2/output/outhathateagerrealshuf")
 
 compare_efdthatsyn <- compareAll( rbind( tidydfsynthetic(dfefdthatsyn), tidydfsynthetic(dfhathateagersyn)[2,] ) ) 
 compare_efdthatreal <- compareAll( rbind( tidydfreal(dfefdthatreal), tidydfreal(dfhathateagerreal)[2,]    ) ) 
@@ -79,14 +79,14 @@ compare_hathateagersyn <- compareAll(tidydfsynthetic(dfhathateagersyn))
 compare_hathateagerreal <- compareAll(tidydfreal(dfhathateagerreal)) 
 compare_hathateagerrealshuf <- compareAll(tidydfreal(dfhathateagerrealshuf)) 
 
-compareTwo(tidydfsynthetic(dfefdthatsyn),"/home/c/papers/1progressReport/content/tables/efdthatsyn.tex", c(1,2))
-compareTwo(tidydfreal(dfefdthatreal),"/home/c/papers/1progressReport/content/tables/efdthatreal.tex", c(1,2))
-compareTwo(tidydfreal(dfefdthatrealshuf),"/home/c/papers/1progressReport/content/tables/efdthatrealshuf.tex", c(1,2))
+compareTwo(list(tidydfsynthetic(dfhathateagersyn), NA, NA),"/home/c/papers/efhat/hathateagersyn.tex", c(1,2))
+compareTwo(list(tidydfreal(dfhathateagerreal), NA, NA),"/home/c/papers/efhat/hathateagerreal.tex", c(1,2))
+compareTwo(list(tidydfreal(dfhathateagerrealshuf), NA, NA),"/home/c/papers/efhat/hathateagerrealshuf.tex", c(1,2))
 
-compareTwo(tidydfsynthetic(dfhathateagersyn),"/home/c/papers/1progressReport/content/tables/hathateagersyn.tex", c(1,2))
-compareTwo(tidydfreal(dfhathateagerreal),"/home/c/papers/1progressReport/content/tables/hathateagerreal.tex", c(1,2))
-compareTwo(tidydfreal(dfhathateagerrealshuf),"/home/c/papers/1progressReport/content/tables/hathateagerrealshuf.tex", c(1,2))
 
+compareTwo(list(tidydfsynthetic(dfefdthatsyn), NA, NA)"/home/c/papers/1progressReport/content/tables/efdthatsyn.tex", c(1,2))
+compareTwo(list(tidydfreal(dfefdthatreal), NA, NA)"/home/c/papers/1progressReport/content/tables/efdthatreal.tex", c(1,2))
+compareTwo(list(tidydfreal(dfefdthatrealshuf), NA, NA),"/home/c/papers/1progressReport/content/tables/efdthatrealshuf.tex", c(1,2))
 
 
 

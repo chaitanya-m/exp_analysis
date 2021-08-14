@@ -255,7 +255,7 @@ mevsynT <- mevsynT[-c(5),-2]
 # remove buggy ARF
 
 colnames(mevsynT) <- seq(0,24)
-colnames(mevsynT)[1] <- "& \\textit{Learners}  $\\downarrow$ \\; \\textit{Streams} $\\rightarrow$"
+colnames(mevsynT)[1] <- "\\textit{Learners}  $\\downarrow$ \\; \\textit{Streams} $\\rightarrow$"
 #  "& $Learners \downarrow Streams \rightarrow$"
 
 learners = c("ARF EFDT", "ARF VFDT", "ADOB EFDT", "ADOB VFDT", "BOLE EFDT", "BOLE VFDT", "LevBagNoAdwin EFDT", "LevBagNoAdwin VFDT", 
@@ -268,7 +268,7 @@ mevsynT[,1] <- learners
 mevsynT[,-1] <- round(mevsynT[,-1], digits=0) # round to integers
 
 
-write.table(mevsynT, "/home/c/papers/ensemble/syntheticCPUtimes.tex", quote=FALSE, col.names = TRUE, sep = ' & ', eol = " \\\\\\hline\n",)
+write.table(mevsynT, "/home/c/papers/ensemble/syntheticCPUtimes.tex", quote=FALSE, col.names = TRUE, row.names = FALSE, sep = ' & ', eol = " \\\\\\hline\n",)
 
 # real data times
 
@@ -279,7 +279,7 @@ colnames(mevrealT)[1] <- colnames(mevsynT)[1]
 mevrealT[,1] <- learners
 mevrealT[,-1] <- round(mevrealT[,-1], digits=0)
 
-write.table(mevrealT, "/home/c/papers/ensemble/realCPUtimes.tex", quote=FALSE, col.names = TRUE, sep = ' & ', eol = " \\\\\\hline\n",)
+write.table(mevrealT, "/home/c/papers/ensemble/realCPUtimes.tex", quote=FALSE, col.names = TRUE, row.names = FALSE, sep = ' & ', eol = " \\\\\\hline\n",)
 
 
 # real shuf times
@@ -290,7 +290,7 @@ colnames(mevrealshufT)[1] <- colnames(mevsynT)[1]
 mevrealshufT[,1] <- learners
 mevrealshufT[,-1] <- round(mevrealshufT[,-1], digits=0)
 
-write.table(mevrealshufT, "/home/c/papers/ensemble/realshufCPUtimes.tex", quote=FALSE, col.names = TRUE, sep = ' & ', eol = " \\\\\\hline\n",)
+write.table(mevrealshufT, "/home/c/papers/ensemble/realshufCPUtimes.tex", quote=FALSE, col.names = TRUE, row.names = FALSE, sep = ' & ', eol = " \\\\\\hline\n",)
 
 
 

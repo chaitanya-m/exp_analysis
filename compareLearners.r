@@ -193,9 +193,14 @@ compareTwo <- function(dfs, output, compareRows){
   
   if (is.na(dftV) && is.na(dftL)){
     #only for 1 on 1 comparisons... test statistics
+    
     write("\\midrule\\multicolumn{3}{l}{A \\textbf{bold} error value indicates higher accuracy, and \\textit{\\textbf{bold italics}} indicate a tie.}\\\\", output, append=TRUE)
     write(paste("\\multicolumn{3}{l}{\\textbf{One-tailed binomial test statistics}: ", paste("\\textbf{", pvalue, "};",sep=""), " ", paste("\\textbf{", confint,"}",sep=""), "}\\\\"), output, append=TRUE)
-  } else if (is.na(dftV) || is.na(dftL)){
+    
+    
+  }
+  
+  else if (is.na(dftV) || is.na(dftL)){
     write("\\midrule\\multicolumn{5}{l}{A \\textbf{bold} error value indicates higher accuracy, and \\textit{\\textbf{bold italics}} indicate a tie.}\\\\", output, append=TRUE)
     write(paste("\\multicolumn{5}{l}{\\textbf{One-tailed binomial test statistics}: ", paste("\\textbf{", pvalue, "};",sep=""), " ", paste("\\textbf{", confint,"}",sep=""), "}\\\\"), output, append=TRUE)
   }
