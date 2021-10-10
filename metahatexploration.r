@@ -71,6 +71,11 @@ dfhathateagersyn<- read_csv("/home/c/results2/output/outhathateagersynthetic")
 dfhathateagerreal<- read_csv("/home/c/results2/output/outhathateagerreal")
 dfhathateagerrealshuf<- read_csv("/home/c/results2/output/outhathateagerrealshuf")
 
+dfefdtefhatsyn<- read_csv("/home/c/results2/output/outefdtefhatsyn")
+dfefdtefhatreal<- read_csv("/home/c/results2/output/outefdtefhatreal")
+dfefdtefhatrealshuf<- read_csv("/home/c/results2/output/outefdtefhatrealshuf")
+
+
 compare_efdthatsyn <- compareAll( rbind( tidydfsynthetic(dfefdthatsyn), tidydfsynthetic(dfhathateagersyn)[2,] ) ) 
 compare_efdthatreal <- compareAll( rbind( tidydfreal(dfefdthatreal), tidydfreal(dfhathateagerreal)[2,]    ) ) 
 compare_efdthatrealshuf <- compareAll( rbind( tidydfreal(dfefdthatrealshuf), tidydfreal(dfhathateagerrealshuf)[2,]) )
@@ -84,10 +89,13 @@ compareTwo(list(tidydfreal(dfhathateagerreal), NA, NA),"/home/c/papers/efhat/hat
 compareTwo(list(tidydfreal(dfhathateagerrealshuf), NA, NA),"/home/c/papers/efhat/hathateagerrealshuf.tex", c(1,2))
 
 
-compareTwo(list(tidydfsynthetic(dfefdthatsyn), NA, NA)"/home/c/papers/1progressReport/content/tables/efdthatsyn.tex", c(1,2))
-compareTwo(list(tidydfreal(dfefdthatreal), NA, NA)"/home/c/papers/1progressReport/content/tables/efdthatreal.tex", c(1,2))
-compareTwo(list(tidydfreal(dfefdthatrealshuf), NA, NA),"/home/c/papers/1progressReport/content/tables/efdthatrealshuf.tex", c(1,2))
+compareTwo(list(tidydfsynthetic(dfefdthatsyn), NA, NA), "/home/c/papers/efhat/efdthatsyn.tex", c(1,2))
+compareTwo(list(tidydfreal(dfefdthatreal), NA, NA), "/home/c/papers/efhat/efdthatreal.tex", c(1,2))
+compareTwo(list(tidydfreal(dfefdthatrealshuf), NA, NA), "/home/c/papers/efhat/efdthatrealshuf.tex", c(1,2))
 
+compareTwo(list(tidydfsynthetic(dfefdtefhatsyn), NA, NA), "/home/c/papers/efhat/efdtefhatsyn.tex", c(1,2))
+compareTwo(list(tidydfreal(dfefdtefhatreal), NA, NA), "/home/c/papers/efhat/efdtefhatreal.tex", c(1,2))
+compareTwo(list(tidydfreal(dfefdtefhatrealshuf), NA, NA), "/home/c/papers/efhat/efdtefhatrealshuf.tex", c(1,2))
 
 
 
@@ -96,7 +104,7 @@ compareTwo(list(tidydfreal(dfefdthatrealshuf), NA, NA),"/home/c/papers/1progress
 
 #=================================================================================
 # This is my version of HAT.
-omhs<- read_csv("/home/c/exp_dir_results/output/outmetahatsynthetic")
+omhs<- read_csv("/home/c/results2/output/outmetahatsynthetic")
 
 nrow(omhs)
 
@@ -133,3 +141,4 @@ allComparisons <- compareAll(omhsE[,-2]) # without error symbol
 write.table(allComparisons, "hat-efdt-ensemble.csv", quote=FALSE, col.names = TRUE, sep = ',', row.names = FALSE)#, eol = " \\\\\n",)
 
 #================================================
+

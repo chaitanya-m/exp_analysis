@@ -158,7 +158,6 @@ compareTwo <- function(dfs, output, compareRows){
       #only for 1 on 1 comparisons... test statistics
       uniquewinsPrint<-list(paste("\\multicolumn{1}{l?}{\\textbf{", uniquewins[[1]],"}}",sep=""),paste("\\multicolumn{1}{l}{\\textbf{", uniquewins[[2]], "}}",sep=""))
       dfPrint<-rbind(dfPrint,"\\midrule\n\\textbf{Unique Wins}" = uniquewinsPrint) # this is a rowname col + 2 columns in dfPrint... being configured to fit a latex table with 5 columns
-   
     }    
     
     else if (is.na(dftV) || is.na(dftL)){
@@ -193,12 +192,9 @@ compareTwo <- function(dfs, output, compareRows){
   
   if (is.na(dftV) && is.na(dftL)){
     #only for 1 on 1 comparisons... test statistics
-    
-    write("\\midrule\\multicolumn{3}{l}{A \\textbf{bold} error value indicates higher accuracy, and \\textit{\\textbf{bold italics}} indicate a tie.}\\\\", output, append=TRUE)
-    write(paste("\\multicolumn{3}{l}{\\textbf{One-tailed binomial test statistics}: ", paste("\\textbf{", pvalue, "};",sep=""), " ", paste("\\textbf{", confint,"}",sep=""), "}\\\\"), output, append=TRUE)
-    
-    
-  }
+    write("\\midrule\\multicolumn{3}{C{8cm}}{A \\textbf{bold} error value indicates higher accuracy, and \\textit{\\textbf{bold italics}} indicate a tie.}\\\\", output, append=TRUE)
+    write(paste("\\multicolumn{3}{C{8cm}}{\\textbf{One-tailed binomial test statistics}: ", paste("\\textbf{", pvalue, "};",sep=""), " ", paste("\\textbf{", confint,"}",sep=""), "}\\\\"), output, append=TRUE)
+  } # use {C{8cm}} instead of {l} for two column format
   
   else if (is.na(dftV) || is.na(dftL)){
     write("\\midrule\\multicolumn{5}{l}{A \\textbf{bold} error value indicates higher accuracy, and \\textit{\\textbf{bold italics}} indicate a tie.}\\\\", output, append=TRUE)
